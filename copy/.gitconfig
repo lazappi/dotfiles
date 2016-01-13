@@ -51,6 +51,9 @@
 [merge]
   log = true
   ff = false
+  tool = vimdiff
+
+[pull]
 
 [push]
   default = simple
