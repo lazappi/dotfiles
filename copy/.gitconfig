@@ -1,6 +1,7 @@
 [user]
   name = Luke Zappia
   email = EMAIL
+
 [core]
   autocrlf = input
   whitespace = fix,space-before-tab,tab-in-indent,trailing-space
@@ -57,5 +58,5 @@
   pushInsteadOf = "git://gist.github.com/"
 [url "git://gist.github.com/"]
   insteadOf = "gist:"
-[url "git@heroku.com:"]
-  insteadOf = "heroku:"
+[url "https://"]
+  insteadOf = "git://"
