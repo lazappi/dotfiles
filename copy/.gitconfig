@@ -7,6 +7,8 @@
   compression = 9
   excludesfile = ~/.gitignore_global
   filemode = false
+  editor = vim
+  whitespace = fix,blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
 
 [apply]
 
@@ -37,6 +39,7 @@
   frag = magenta bold
   old = red bold
   new = green bold
+  whitespace = blue reverse
 
 [color "status"]
   added = yellow
@@ -44,6 +47,9 @@
   untracked = red
 
 [diff]
+  tool = vimdiff
+
+[difftool]
 
 [help]
   autocorrect = 20
