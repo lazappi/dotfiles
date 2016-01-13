@@ -1,6 +1,6 @@
 [user]
   name = Luke Zappia
-  email = EMAIL
+  email = lazappi@users.noreply.github.com
 
 [core]
   autocrlf = input
@@ -8,9 +8,10 @@
   excludesfile = ~/.gitignore_global
   filemode = false
   editor = vim
-  whitespace = fix,blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+  whitespace = fix,blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol,tab-in-indent
 
 [apply]
+  whitespace = fix
 
 [alias]
   # Complex aliases from http://michaelwales.com/articles/make-gitconfig-work-for-you/
