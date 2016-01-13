@@ -1,5 +1,5 @@
 [user]
-  name = Ben Alman
+  name = Luke Zappia
   email = EMAIL
 [core]
   autocrlf = input
@@ -37,10 +37,12 @@
   added = yellow
   changed = green
   untracked = cyan
+[help]
+  autocorrect = 20
 [merge]
   log = true
-[difftool "Kaleidoscope"]
-  cmd = ksdiff-wrapper git \"$LOCAL\" \"$REMOTE\"
+[push]
+  default = simple
 [rerere]
   enabled = 1
 [url "git@github.com:"]
