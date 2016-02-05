@@ -100,9 +100,10 @@ if [[ ! "${prompt_colors[@]}" ]]; then
     $Reset                # 0: Reset
     $Bold$Under$Yellow    # 1: user colour
     $Bold$Blue            # 2: path colour
-    $Blue                 # 3: time colour
+    $On_IBlue             # 3: time colour
     $Bold$Blue            # 4: prompt colour
-    $Bold$Red             # 5: error colour
+    $Bold$Cyan            # 5: git colour
+    $Bold$Red             # 6: error colour
   )
 
   if [[ "$SSH_TTY" ]]; then
@@ -122,7 +123,7 @@ alias prompt_getcolors='local i; for i in ${!prompt_colors[@]}; do local c$i="${
 # Exit code of previous command.
 function prompt_exitcode() {
   prompt_getcolors
-  [[ $1 != 0 ]] && echo " $c5[Error $1]$c0"
+  [[ $1 != 0 ]] && echo " $c6[Error $1]$c0"
 }
 
 # Git status.
@@ -142,9 +143,9 @@ function prompt_git() {
       END {print r}'
   )"
   if [[ "$flags" ]]; then
-    output="$output$c1:$c0$flags"
+    output="$output:$flags"
   fi
-  echo "$c1[$c0$output$c1]$c9"
+  echo "$c5[$output]$c0 "
 }
 
 # hg status.
@@ -202,17 +203,19 @@ function prompt_command() {
   PS1="" # PS1="\n" for newline before prompt
   # svn: [repo:lastchanged]
   PS1="$PS1$(prompt_svn)"
-  # git: [branch:flags]
-  PS1="$PS1$(prompt_git)"
   # hg:  [branch:flags]
   PS1="$PS1$(prompt_hg)"
   # misc: [cmd#:hist#]
   # PS1="$PS1$c1[$c0#\#$c1:$c0!\!$c1]$c9"
-  # path: user@host: path
-  PS1="$PS1$c1\u@\h:$c0 $c2\w$c0"
+  # user@host:
+  PS1="$PS1$c1\u@\h:$c0 "
+  # git: [branch:flags]
+  PS1="$PS1$(prompt_git)"
+  # path
+  PS1="$PS1$c2\w$c0"
   PS1="$PS1\n"
   # date: [HH:MM:SS]
-  PS1="$PS1$c3[$(date +"%H:%M:%S")]$c0"
+  PS1="$PS1$c3$(date +"%H:%M:%S")$c0"
   # exit code: 127
   PS1="$PS1$(prompt_exitcode "$exit_code")"
   PS1="$PS1 $c4\$$c0 "
