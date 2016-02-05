@@ -1,9 +1,9 @@
+" ===========================
+" Setup
+" ===========================
+
 " Change mapleader
 let mapleader=","
-
-" Move more naturally up/down when wrapping is enabled.
-nnoremap j gj
-nnoremap k gk
 
 " Local dirs
 if !has('win32')
@@ -19,7 +19,82 @@ augroup vimrc
   autocmd!
 augroup END
 
+" ===========================
+" Navigation
+" ===========================
+
+" Move more naturally up/down when wrapping is enabled.
+nnoremap j gj
+nnoremap k gk
+
+" Scrolling
+set scrolloff=3     " Start scrolling three lines before horizontal border of
+                    " window.
+set sidescrolloff=3 " Start scrolling three columns before vertical border of
+                    " window.
+
+" Ctrl-J/K/L/H select split
+nnoremap <C-J> <C-W>j
+nnoremap <C-K> <C-W>k
+nnoremap <C-L> <C-W>l
+nnoremap <C-H> <C-W>h
+
+" Buffer navigation
+nnoremap <leader>b :CtrlPBuffer<CR> " List other buffers
+map <leader><leader> :b#<CR>        " Switch between the last two files
+map gb :bnext<CR>                   " Next buffer
+map gB :bprev<CR>                   " Prev buffer
+
+" Jump to buffer number 1-9 with ,<N> or 1-99 with <N>gb
+let c = 1
+while c <= 99
+  if c < 10
+    execute "nnoremap <silent> <leader>" . c . " :" . c . "b<CR>"
+  endif
+  execute "nnoremap <silent> " . c . "gb :" . c . "b<CR>"
+  let c += 1
+endwhile
+
+" Fix page up and down
+map <PageUp> <C-U>
+map <PageDown> <C-D>
+imap <PageUp> <C-O><C-U>
+imap <PageDown> <C-O><C-D>
+
+" ===========================
+" Indentation and tabs
+" ===========================
+
+" Indentation
+set autoindent    " Copy indent from last line when starting new line.
+set shiftwidth=2  " The # of spaces for indenting.
+set smarttab      " At start of line, <Tab> inserts shiftwidth spaces, 
+                  " <Bs> deletes shiftwidth spaces.
+set softtabstop=2 " Tab key results in 2 spaces
+set tabstop=2     " Tabs indent only 2 spaces
+set expandtab     " Expand tabs to spaces
+
+" Toggle show tabs and trailing spaces (,c)
+if has('win32')
+  set listchars=tab:>\ ,trail:.,eol:$,nbsp:_,extends:>,precedes:<
+else
+  set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_,extends:>,precedes:<
+endif
+"set listchars=tab:>\ ,trail:.,eol:$,nbsp:_,extends:>,precedes:<
+"set fillchars=fold:-
+nnoremap <silent> <leader>v :call ToggleInvisibles()<CR>
+
+" ===========================
+" Status line
+" ===========================
+
+set noshowmode   " Don't show the current mode.
+                 " (airline.vim takes care of this for us)
+set laststatus=2 " Always show status line
+
+" ===========================
 " Theme / Syntax highlighting
+" ===========================
 
 " Make invisible chars less visible in terminal.
 autocmd vimrc ColorScheme * :hi NonText ctermfg=236
@@ -35,15 +110,17 @@ let g:molokai_italic=0
 colorscheme molokai
 set background=dark
 
+" ==========================
 " Visual settings
-set cursorline " Highlight current line
-set number " Enable line numbers.
-set showtabline=2 " Always show tab bar.
-set relativenumber " Use relative line numbers. Current line is still in status bar.
-set title " Show the filename in the window titlebar.
-set nowrap " Do not wrap lines.
-set noshowmode " Don't show the current mode (airline.vim takes care of us)
-set laststatus=2 " Always show status line
+" ==========================
+"
+set cursorline     " Highlight current line
+set number         " Enable line numbers.
+set showtabline=2  " Always show tab bar.
+set relativenumber " Use relative line numbers.
+                   " Current line is still in status bar.
+set title          " Show the filename in the window titlebar.
+set nowrap         " Do not wrap lines.
 
 " Show absolute numbers in insert mode, otherwise relative line numbers.
 autocmd vimrc InsertEnter * :set norelativenumber
@@ -53,30 +130,9 @@ autocmd vimrc InsertLeave * :set relativenumber
 set textwidth=80
 set colorcolumn=+1
 
-" Scrolling
-set scrolloff=3 " Start scrolling three lines before horizontal border of window.
-set sidescrolloff=3 " Start scrolling three columns before vertical border of window.
-
-" Indentation
-set autoindent " Copy indent from last line when starting new line.
-set shiftwidth=2 " The # of spaces for indenting.
-set smarttab " At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shiftwidth spaces.
-set softtabstop=2 " Tab key results in 2 spaces
-set tabstop=2 " Tabs indent only 2 spaces
-set expandtab " Expand tabs to spaces
-
-" Reformatting
-set nojoinspaces " Only insert single space after a '.', '?' and '!' with a join command.
-
-" Toggle show tabs and trailing spaces (,c)
-if has('win32')
-  set listchars=tab:>\ ,trail:.,eol:$,nbsp:_,extends:>,precedes:<
-else
-  set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_,extends:>,precedes:<
-endif
-"set listchars=tab:>\ ,trail:.,eol:$,nbsp:_,extends:>,precedes:<
-"set fillchars=fold:-
-nnoremap <silent> <leader>v :call ToggleInvisibles()<CR>
+" ===========================
+" Whitespace
+" ===========================
 
 " Extra whitespace
 autocmd vimrc BufWinEnter * :2match ExtraWhitespaceMatch /\s\+$/
@@ -105,12 +161,16 @@ function! StripExtraWhiteSpace()
 endfunction
 noremap <leader>ss :call StripExtraWhiteSpace()<CR>
 
+" ===========================
 " Search / replace
-set gdefault " By default add g flag to search/replace. Add g to toggle.
-set hlsearch " Highlight searches
-set incsearch " Highlight dynamically as pattern is typed.
+" ===========================
+"
+set gdefault   " By default add g flag to search/replace. Add g to toggle.
+set hlsearch   " Highlight searches
+set incsearch  " Highlight dynamically as pattern is typed.
 set ignorecase " Ignore case of searches.
-set smartcase " Ignore 'ignorecase' if search pattern contains uppercase characters.
+set smartcase  " Ignore 'ignorecase' if search pattern contains uppercase 
+               " characters.
 
 " Clear last search
 map <silent> <leader>/ <Esc>:nohlsearch<CR>
@@ -120,47 +180,23 @@ set wildignore+=*.jpg,*.jpeg,*.gif,*.png,*.gif,*.psd,*.o,*.obj,*.min.js
 set wildignore+=*/bower_components/*,*/node_modules/*
 set wildignore+=*/vendor/*,*/.git/*,*/.hg/*,*/.svn/*,*/log/*,*/tmp/*
 
+" ===========================
 " Vim commands
-set hidden " When a buffer is brought to foreground, remember undo history and marks.
-set report=0 " Show all changes.
-set mouse=a " Enable mouse in all modes.
+" ===========================
+"
+set hidden       " When a buffer is brought to foreground, remember undo
+                 " history and marks.
+set report=0     " Show all changes.
+set mouse=a      " Enable mouse in all modes.
 set shortmess+=I " Hide intro menu.
 
+" Reformatting
+set nojoinspaces " Only insert single space after a '.', '?' and '!' with a
+                 " join command.
+
 " Splits
-set splitbelow " New split goes below
-set splitright " New split goes right
-
-" Ctrl-J/K/L/H select split
-nnoremap <C-J> <C-W>j
-nnoremap <C-K> <C-W>k
-nnoremap <C-L> <C-W>l
-nnoremap <C-H> <C-W>h
-
-" Buffer navigation
-nnoremap <leader>b :CtrlPBuffer<CR> " List other buffers
-map <leader><leader> :b#<CR> " Switch between the last two files
-map gb :bnext<CR> " Next buffer
-map gB :bprev<CR> " Prev buffer
-
-" Jump to buffer number 1-9 with ,<N> or 1-99 with <N>gb
-let c = 1
-while c <= 99
-  if c < 10
-    execute "nnoremap <silent> <leader>" . c . " :" . c . "b<CR>"
-  endif
-  execute "nnoremap <silent> " . c . "gb :" . c . "b<CR>"
-  let c += 1
-endwhile
-
-" Fix page up and down
-map <PageUp> <C-U>
-map <PageDown> <C-D>
-imap <PageUp> <C-O><C-U>
-imap <PageDown> <C-O><C-D>
-
-" Use Q for formatting the current paragraph (or selection)
-" vmap Q gq
-" nmap Q gqap
+set splitbelow   " New split goes below
+set splitright   " New split goes right
 
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cmap w!! w !sudo tee > /dev/null %
@@ -188,7 +224,9 @@ if !exists("*SourceConfigs")
   endfunction
 endif
 
-"" FILE TYPES
+" ===========================
+" File types
+" ===========================
 
 " vim
 autocmd vimrc BufRead .vimrc,*.vim set keywordprg=:help
@@ -196,8 +234,9 @@ autocmd vimrc BufRead .vimrc,*.vim set keywordprg=:help
 " markdown
 autocmd vimrc BufRead,BufNewFile *.md set filetype=markdown
 
-
-" PLUGINS
+" ===========================
+" Plugins
+" ===========================
 
 " Airline
 let g:airline_powerline_fonts = 1 " TODO: detect this?
