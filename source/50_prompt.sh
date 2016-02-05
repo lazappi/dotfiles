@@ -11,31 +11,9 @@
 # Read more (and see a screenshot) in the "Prompt" section of
 # https://github.com/cowboy/dotfiles
 
-# ANSI color codes
-RS="\[\033[0m\]"            # reset
-HC="\[\033[1m\]"            # hicolor
-UL="\[\033[4m\]"            # underline
-INV="\[\033[7m\]"           # inverse background and foreground
-FBLK="\[\033[30m\]"         # foreground black
-FRED="\[\033[31m\]"         # foreground red
-FGRN="\[\033[32m\]"         # foreground green
-FYEL="\[\033[33m\]"         # foreground yellow
-FBLE="\[\033[34m\]"         # foreground blue
-FMAG="\[\033[35m\]"         # foreground magenta
-FCYN="\[\033[36m\]"         # foreground cyan
-FWHT="\[\033[37m\]"         # foreground white
-BBLK="\[\033[40m\]"         # background black
-BRED="\[\033[41m\]"         # background red
-BGRN="\[\033[42m\]"         # background green
-BYEL="\[\033[43m\]"         # background yellow
-BBLE="\[\033[44m\]"         # background blue
-BMAG="\[\033[45m\]"         # background magenta
-BCYN="\[\033[46m\]"         # background cyan
-BWHT="\[\033[47m\]"         # background white
+# Colour codes
 
-# Arch Linux color codes
-
-# Reset
+## Reset
 Reset='\[\e[0m\]'           # Text Reset
 RBold='\[\e[21m\]'          # Reset Bold
 RDim='\[\e[22m\]'           # Reset Dim
@@ -45,7 +23,7 @@ RBlink='\[\e[25m\]'         # Reset Blink
 RRev='\[\e[27m\]'           # Reset Reverse colours
 RHidden='\[\2e[8m\]'        # Reset Hidden
 
-# Formatting Modes
+## Formatting Modes
 Norm='\[\e[0m\]'            # Normal
 Bold='\[\e[1m\]'            # Bold
 Dim='\[\e[2m\]'             # Dim
@@ -55,7 +33,7 @@ Blink='\[\e[5m\]'           # Blink
 Rev='\[\e[7m\]'             # Reverse colours
 Hidden='\[\e[8m\]'          # Hidden
 
-# Regular Colors
+## Regular Colors
 Black='\[\e[30m\]'          # Black
 Red='\[\e[31m\]'            # Red
 Green='\[\e[32m\]'          # Green
@@ -65,7 +43,7 @@ Purple='\[\e[35m\]'         # Purple
 Cyan='\[\e[36m\]'           # Cyan
 White='\[\e[37m\]'          # White
 
-# Background
+## Background
 On_Black='\[\e[40m\]'       # Black
 On_Red='\[\e[41m\]'         # Red
 On_Green='\[\e[42m\]'       # Green
@@ -75,7 +53,7 @@ On_Purple='\[\e[45m\]'      # Purple
 On_Cyan='\[\e[46m\]'        # Cyan
 On_White='\[\e[47m\]'       # White
 
-# High Intensity
+## High Intensity
 IBlack='\[\e[90m\]'         # Black
 IRed='\[\e[91m\]'           # Red
 IGreen='\[\e[92m\]'         # Green
@@ -85,7 +63,7 @@ IPurple='\[\e[95m\]'        # Purple
 ICyan='\[\e[96m\]'          # Cyan
 IWhite='\[\e[97m\]'         # White
 
-# High Intensity backgrounds
+## High Intensity backgrounds
 On_IBlack='\[\e[100m\]'     # Black
 On_IRed='\[\e[101m\]'       # Red
 On_IGreen='\[\e[102m\]'     # Green
@@ -94,6 +72,8 @@ On_IBlue='\[\e[104m\]'      # Blue
 On_IPurple='\[\e[105m\]'    # Purple
 On_ICyan='\[\e[106m\]'      # Cyan
 On_IWhite='\[\e[107m\]'     # White
+
+# Set colours
 
 if [[ ! "${prompt_colors[@]}" ]]; then
   prompt_colors=(
@@ -117,7 +97,7 @@ if [[ ! "${prompt_colors[@]}" ]]; then
 fi
 
 # Inside a prompt function, run this alias to setup local $c0-$c9 color vars.
-#alias prompt_getcolors='prompt_colors[9]=; local i; for i in ${!prompt_colors[@]}; do local c$i="\[\e[0;${prompt_colors[$i]}m\]"; done'
+# Sets up local variables that can be used by function
 alias prompt_getcolors='local i; for i in ${!prompt_colors[@]}; do local c$i="${prompt_colors[$i]}"; done'
 
 # Exit code of previous command.
@@ -148,39 +128,6 @@ function prompt_git() {
   echo "$c5[$output]$c0 "
 }
 
-# hg status.
-function prompt_hg() {
-  prompt_getcolors
-  local summary output bookmark flags
-  summary="$(hg summary 2>/dev/null)"
-  [[ $? != 0 ]] && return;
-  output="$(echo "$summary" | awk '/branch:/ {print $2}')"
-  bookmark="$(echo "$summary" | awk '/bookmarks:/ {print $2}')"
-  flags="$(
-    echo "$summary" | awk 'BEGIN {r="";a=""} \
-      /(modified)/     {r= "+"}\
-      /(unknown)/      {a= "?"}\
-      END {print r a}'
-  )"
-  output="$output:$bookmark"
-  if [[ "$flags" ]]; then
-    output="$output$c1:$c0$flags"
-  fi
-  echo "$c1[$c0$output$c1]$c9"
-}
-
-# SVN info.
-function prompt_svn() {
-  prompt_getcolors
-  local info="$(svn info . 2> /dev/null)"
-  local last current
-  if [[ "$info" ]]; then
-    last="$(echo "$info" | awk '/Last Changed Rev:/ {print $4}')"
-    current="$(echo "$info" | awk '/Revision:/ {print $2}')"
-    echo "$c1[$c0$last$c1:$c0$current$c1]$c9"
-  fi
-}
-
 # Maintain a per-execution call stack.
 prompt_stack=()
 trap 'prompt_stack=("${prompt_stack[@]}" "$BASH_COMMAND")' DEBUG
@@ -201,12 +148,6 @@ function prompt_command() {
   prompt_getcolors
   # http://twitter.com/cowboy/status/150254030654939137
   PS1="" # PS1="\n" for newline before prompt
-  # svn: [repo:lastchanged]
-  PS1="$PS1$(prompt_svn)"
-  # hg:  [branch:flags]
-  PS1="$PS1$(prompt_hg)"
-  # misc: [cmd#:hist#]
-  # PS1="$PS1$c1[$c0#\#$c1:$c0!\!$c1]$c9"
   # user@host:
   PS1="$PS1$c1\u@\h:$c0 "
   # git: [branch:flags]
