@@ -96,21 +96,22 @@ On_ICyan='\[\e[106m\]'      # Cyan
 On_IWhite='\[\e[107m\]'     # White
 
 if [[ ! "${prompt_colors[@]}" ]]; then
-  prompt_colors=(  
-    $Cyan  # information color
-    $White # bracket color
-    $Red   # error color
+  prompt_colors=(
+    $Reset                # 0: Reset
+    $Bold$Under$IYellow   # 1: user colour
+    $Bold$Blue            # 2: path colour
+    $Dim$Cyan             # 3: time colour
+    $Bold$Blue            # 4: prompt colour
+    $Red                  # 5: error colour
   )
 
   if [[ "$SSH_TTY" ]]; then
     # connected via ssh
-    prompt_colors[0]=$Green
+    prompt_colors[1]=$Green
   elif [[ "$USER" == "root" ]]; then
     # logged in as root
-    prompt_colors[0]=$Purple
+    prompt_colors[1]=$Purple
   fi
-
-  prompt_colors[9]=$Reset
 
 fi
 
@@ -121,7 +122,7 @@ alias prompt_getcolors='local i; for i in ${!prompt_colors[@]}; do local c$i="${
 # Exit code of previous command.
 function prompt_exitcode() {
   prompt_getcolors
-  [[ $1 != 0 ]] && echo " $c2$1$c9"
+  [[ $1 != 0 ]] && echo " $c4$1$c0"
 }
 
 # Git status.
@@ -207,14 +208,14 @@ function prompt_command() {
   PS1="$PS1$(prompt_hg)"
   # misc: [cmd#:hist#]
   # PS1="$PS1$c1[$c0#\#$c1:$c0!\!$c1]$c9"
-  # path: [user@host:path]
-  PS1="$PS1$c1$c0\u$c1@$c0\h$c1:$c0\w$c1$c9"
+  # path: user@host: path
+  PS1="$PS1$c1\u@\h:$c0 $c2\w$c0"
   PS1="$PS1\n"
   # date: [HH:MM:SS]
-  PS1="$PS1$c1[$c0$(date +"%H$c1:$c0%M$c1:$c0%S")$c1]$c9"
+  PS1="$PS1$c3[$(date +"%H:%M:%S")]$c0"
   # exit code: 127
   PS1="$PS1$(prompt_exitcode "$exit_code")"
-  PS1="$PS1 \$ "
+  PS1="$PS1 $c4\$$c0 "
 }
 
 PROMPT_COMMAND="prompt_command"
