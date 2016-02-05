@@ -163,3 +163,5 @@ function prompt_command() {
 }
 
 PROMPT_COMMAND="prompt_command"
+# Trim number of directory levels shown
+PROMPT_DIRTRIM=3
