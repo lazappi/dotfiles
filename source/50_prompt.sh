@@ -98,7 +98,7 @@ On_IWhite='\[\e[107m\]'     # White
 if [[ ! "${prompt_colors[@]}" ]]; then
   prompt_colors=(
     $Reset                # 0: Reset
-    $Bold$Under$IYellow   # 1: user colour
+    $Bold$Under$Yellow    # 1: user colour
     $Bold$Blue            # 2: path colour
     $Blue                 # 3: time colour
     $Bold$Blue            # 4: prompt colour
@@ -107,10 +107,10 @@ if [[ ! "${prompt_colors[@]}" ]]; then
 
   if [[ "$SSH_TTY" ]]; then
     # connected via ssh
-    prompt_colors[1]=$Green
+    prompt_colors[1]=$Bold$Under$Cyan
   elif [[ "$USER" == "root" ]]; then
     # logged in as root
-    prompt_colors[1]=$Purple
+    prompt_colors[1]=$Bold$Under$Green
   fi
 
 fi
