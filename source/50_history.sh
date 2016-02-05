@@ -4,6 +4,8 @@
 shopt -s histreedit
 # History expansions will be verified before execution.
 shopt -s histverify
+# Append to history, don't overwrite it
+shopt -s hitsappend
 
 # Entries beginning with space aren't added into history, and duplicate
 # entries will be erased (leaving the most recent entry).

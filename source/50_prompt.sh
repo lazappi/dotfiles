@@ -11,40 +11,99 @@
 # Read more (and see a screenshot) in the "Prompt" section of
 # https://github.com/cowboy/dotfiles
 
-# ANSI CODES - SEPARATE MULTIPLE VALUES WITH ;
-#
-#  0  reset          4  underline
-#  1  bold           7  inverse
-#
-# FG  BG  COLOR     FG  BG  COLOR
-# 30  40  black     34  44  blue
-# 31  41  red       35  45  magenta
-# 32  42  green     36  46  cyan
-# 33  43  yellow    37  47  white
+# Colour codes
+
+## Reset
+Reset='\[\e[0m\]'           # Text Reset
+RBold='\[\e[21m\]'          # Reset Bold
+RDim='\[\e[22m\]'           # Reset Dim
+RItalic='\[\e[23m\]'        # Reset Italic
+RUnder='\[\e[24m\]'         # Reset Underline
+RBlink='\[\e[25m\]'         # Reset Blink
+RRev='\[\e[27m\]'           # Reset Reverse colours
+RHidden='\[\2e[8m\]'        # Reset Hidden
+
+## Formatting Modes
+Norm='\[\e[0m\]'            # Normal
+Bold='\[\e[1m\]'            # Bold
+Dim='\[\e[2m\]'             # Dim
+Italic='\[\e[3m\]'          # Italic
+Under='\[\e[4m\]'           # Underline
+Blink='\[\e[5m\]'           # Blink
+Rev='\[\e[7m\]'             # Reverse colours
+Hidden='\[\e[8m\]'          # Hidden
+
+## Regular Colors
+Black='\[\e[30m\]'          # Black
+Red='\[\e[31m\]'            # Red
+Green='\[\e[32m\]'          # Green
+Yellow='\[\e[33m\]'         # Yellow
+Blue='\[\e[34m\]'           # Blue
+Purple='\[\e[35m\]'         # Purple
+Cyan='\[\e[36m\]'           # Cyan
+White='\[\e[37m\]'          # White
+
+## Background
+On_Black='\[\e[40m\]'       # Black
+On_Red='\[\e[41m\]'         # Red
+On_Green='\[\e[42m\]'       # Green
+On_Yellow='\[\e[43m\]'      # Yellow
+On_Blue='\[\e[44m\]'        # Blue
+On_Purple='\[\e[45m\]'      # Purple
+On_Cyan='\[\e[46m\]'        # Cyan
+On_White='\[\e[47m\]'       # White
+
+## High Intensity
+IBlack='\[\e[90m\]'         # Black
+IRed='\[\e[91m\]'           # Red
+IGreen='\[\e[92m\]'         # Green
+IYellow='\[\e[93m\]'        # Yellow
+IBlue='\[\e[94m\]'          # Blue
+IPurple='\[\e[95m\]'        # Purple
+ICyan='\[\e[96m\]'          # Cyan
+IWhite='\[\e[97m\]'         # White
+
+## High Intensity backgrounds
+On_IBlack='\[\e[100m\]'     # Black
+On_IRed='\[\e[101m\]'       # Red
+On_IGreen='\[\e[102m\]'     # Green
+On_IYellow='\[\e[103m\]'    # Yellow
+On_IBlue='\[\e[104m\]'      # Blue
+On_IPurple='\[\e[105m\]'    # Purple
+On_ICyan='\[\e[106m\]'      # Cyan
+On_IWhite='\[\e[107m\]'     # White
+
+# Set colours
 
 if [[ ! "${prompt_colors[@]}" ]]; then
   prompt_colors=(
-    "36" # information color
-    "37" # bracket color
-    "31" # error color
+    $Reset                # 0: Reset
+    $Bold$Under$Yellow    # 1: user colour
+    $Bold$Blue            # 2: path colour
+    $On_IBlue             # 3: time colour
+    $Bold$Blue            # 4: prompt colour
+    $Bold$Cyan            # 5: git colour
+    $Bold$Red             # 6: error colour
   )
 
   if [[ "$SSH_TTY" ]]; then
     # connected via ssh
-    prompt_colors[0]="32"
+    prompt_colors[1]=$Bold$Under$Cyan
   elif [[ "$USER" == "root" ]]; then
     # logged in as root
-    prompt_colors[0]="35"
+    prompt_colors[1]=$Bold$Under$Green
   fi
+
 fi
 
 # Inside a prompt function, run this alias to setup local $c0-$c9 color vars.
-alias prompt_getcolors='prompt_colors[9]=; local i; for i in ${!prompt_colors[@]}; do local c$i="\[\e[0;${prompt_colors[$i]}m\]"; done'
+# Sets up local variables that can be used by function
+alias prompt_getcolors='local i; for i in ${!prompt_colors[@]}; do local c$i="${prompt_colors[$i]}"; done'
 
 # Exit code of previous command.
 function prompt_exitcode() {
   prompt_getcolors
-  [[ $1 != 0 ]] && echo " $c2$1$c9"
+  [[ $1 != 0 ]] && echo " $c6[Error $1]$c0"
 }
 
 # Git status.
@@ -64,42 +123,9 @@ function prompt_git() {
       END {print r}'
   )"
   if [[ "$flags" ]]; then
-    output="$output$c1:$c0$flags"
+    output="$output:$flags"
   fi
-  echo "$c1[$c0$output$c1]$c9"
-}
-
-# hg status.
-function prompt_hg() {
-  prompt_getcolors
-  local summary output bookmark flags
-  summary="$(hg summary 2>/dev/null)"
-  [[ $? != 0 ]] && return;
-  output="$(echo "$summary" | awk '/branch:/ {print $2}')"
-  bookmark="$(echo "$summary" | awk '/bookmarks:/ {print $2}')"
-  flags="$(
-    echo "$summary" | awk 'BEGIN {r="";a=""} \
-      /(modified)/     {r= "+"}\
-      /(unknown)/      {a= "?"}\
-      END {print r a}'
-  )"
-  output="$output:$bookmark"
-  if [[ "$flags" ]]; then
-    output="$output$c1:$c0$flags"
-  fi
-  echo "$c1[$c0$output$c1]$c9"
-}
-
-# SVN info.
-function prompt_svn() {
-  prompt_getcolors
-  local info="$(svn info . 2> /dev/null)"
-  local last current
-  if [[ "$info" ]]; then
-    last="$(echo "$info" | awk '/Last Changed Rev:/ {print $4}')"
-    current="$(echo "$info" | awk '/Revision:/ {print $2}')"
-    echo "$c1[$c0$last$c1:$c0$current$c1]$c9"
-  fi
+  echo "$c5[$output]$c0 "
 }
 
 # Maintain a per-execution call stack.
@@ -121,23 +147,21 @@ function prompt_command() {
 
   prompt_getcolors
   # http://twitter.com/cowboy/status/150254030654939137
-  PS1="\n"
-  # svn: [repo:lastchanged]
-  PS1="$PS1$(prompt_svn)"
+  PS1="" # PS1="\n" for newline before prompt
+  # user@host:
+  PS1="$PS1$c1\u@\h:$c0 "
   # git: [branch:flags]
   PS1="$PS1$(prompt_git)"
-  # hg:  [branch:flags]
-  PS1="$PS1$(prompt_hg)"
-  # misc: [cmd#:hist#]
-  # PS1="$PS1$c1[$c0#\#$c1:$c0!\!$c1]$c9"
-  # path: [user@host:path]
-  PS1="$PS1$c1[$c0\u$c1@$c0\h$c1:$c0\w$c1]$c9"
+  # path
+  PS1="$PS1$c2\w$c0"
   PS1="$PS1\n"
   # date: [HH:MM:SS]
-  PS1="$PS1$c1[$c0$(date +"%H$c1:$c0%M$c1:$c0%S")$c1]$c9"
+  PS1="$PS1$c3$(date +"%H:%M:%S")$c0"
   # exit code: 127
   PS1="$PS1$(prompt_exitcode "$exit_code")"
-  PS1="$PS1 \$ "
+  PS1="$PS1 $c4\$$c0 "
 }
 
 PROMPT_COMMAND="prompt_command"
+# Trim number of directory levels shown
+PROMPT_DIRTRIM=3
