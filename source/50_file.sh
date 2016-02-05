@@ -20,6 +20,9 @@ else
   alias lsd='CLICOLOR_FORCE=1 ll | grep --color=never "^d"'
 fi
 
+# File removing
+alias rm=rm -I
+
 # Easier navigation: .., ..., -
 alias ..='cd ..'
 alias ...='cd ../..'
