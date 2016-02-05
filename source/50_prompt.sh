@@ -96,23 +96,27 @@ On_ICyan='\[\e[106m\]'      # Cyan
 On_IWhite='\[\e[107m\]'     # White
 
 if [[ ! "${prompt_colors[@]}" ]]; then
-  prompt_colors=(
-    "36" # information color
-    "37" # bracket color
-    "31" # error color
+  prompt_colors=(  
+    $Cyan  # information color
+    $White # bracket color
+    $Red   # error color
   )
 
   if [[ "$SSH_TTY" ]]; then
     # connected via ssh
-    prompt_colors[0]="32"
+    prompt_colors[0]=$Green
   elif [[ "$USER" == "root" ]]; then
     # logged in as root
-    prompt_colors[0]="35"
+    prompt_colors[0]=$Purple
   fi
+
+  prompt_colors[9]=$Reset
+
 fi
 
 # Inside a prompt function, run this alias to setup local $c0-$c9 color vars.
-alias prompt_getcolors='prompt_colors[9]=; local i; for i in ${!prompt_colors[@]}; do local c$i="\[\e[0;${prompt_colors[$i]}m\]"; done'
+#alias prompt_getcolors='prompt_colors[9]=; local i; for i in ${!prompt_colors[@]}; do local c$i="\[\e[0;${prompt_colors[$i]}m\]"; done'
+alias prompt_getcolors='local i; for i in ${!prompt_colors[@]}; do local c$i="${prompt_colors[$i]}"; done'
 
 # Exit code of previous command.
 function prompt_exitcode() {
@@ -194,7 +198,7 @@ function prompt_command() {
 
   prompt_getcolors
   # http://twitter.com/cowboy/status/150254030654939137
-  PS1="\n"
+  PS1="" # PS1="\n" for newline before prompt
   # svn: [repo:lastchanged]
   PS1="$PS1$(prompt_svn)"
   # git: [branch:flags]
@@ -204,7 +208,7 @@ function prompt_command() {
   # misc: [cmd#:hist#]
   # PS1="$PS1$c1[$c0#\#$c1:$c0!\!$c1]$c9"
   # path: [user@host:path]
-  PS1="$PS1$c1[$c0\u$c1@$c0\h$c1:$c0\w$c1]$c9"
+  PS1="$PS1$c1$c0\u$c1@$c0\h$c1:$c0\w$c1$c9"
   PS1="$PS1\n"
   # date: [HH:MM:SS]
   PS1="$PS1$c1[$c0$(date +"%H$c1:$c0%M$c1:$c0%S")$c1]$c9"
