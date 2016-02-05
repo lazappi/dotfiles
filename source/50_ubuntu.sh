@@ -7,3 +7,5 @@ alias install="sudo apt-get install"
 alias remove="sudo apt-get remove"
 alias search="apt-cache search"
 
+# Make 'less' more friendly for non-text input (eg. .zip)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"

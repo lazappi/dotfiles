@@ -8,6 +8,10 @@ export PATH
 # Trim new lines and copy to clipboard
 alias c="tr -d '\n' | pbcopy"
 
+
+# Make 'less' more friendly for non-text input (eg. .zip)
+[[ "$(type -P lesspipe.sh)" ]] && eval "$(lesspipe.sh)"
+
 # Start ScreenSaver. This will lock the screen if locking is enabled.
 alias ss="open /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app"
 
