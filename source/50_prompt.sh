@@ -11,16 +11,89 @@
 # Read more (and see a screenshot) in the "Prompt" section of
 # https://github.com/cowboy/dotfiles
 
-# ANSI CODES - SEPARATE MULTIPLE VALUES WITH ;
-#
-#  0  reset          4  underline
-#  1  bold           7  inverse
-#
-# FG  BG  COLOR     FG  BG  COLOR
-# 30  40  black     34  44  blue
-# 31  41  red       35  45  magenta
-# 32  42  green     36  46  cyan
-# 33  43  yellow    37  47  white
+# ANSI color codes
+RS="\[\033[0m\]"            # reset
+HC="\[\033[1m\]"            # hicolor
+UL="\[\033[4m\]"            # underline
+INV="\[\033[7m\]"           # inverse background and foreground
+FBLK="\[\033[30m\]"         # foreground black
+FRED="\[\033[31m\]"         # foreground red
+FGRN="\[\033[32m\]"         # foreground green
+FYEL="\[\033[33m\]"         # foreground yellow
+FBLE="\[\033[34m\]"         # foreground blue
+FMAG="\[\033[35m\]"         # foreground magenta
+FCYN="\[\033[36m\]"         # foreground cyan
+FWHT="\[\033[37m\]"         # foreground white
+BBLK="\[\033[40m\]"         # background black
+BRED="\[\033[41m\]"         # background red
+BGRN="\[\033[42m\]"         # background green
+BYEL="\[\033[43m\]"         # background yellow
+BBLE="\[\033[44m\]"         # background blue
+BMAG="\[\033[45m\]"         # background magenta
+BCYN="\[\033[46m\]"         # background cyan
+BWHT="\[\033[47m\]"         # background white
+
+# Arch Linux color codes
+
+# Reset
+Reset='\[\e[0m\]'           # Text Reset
+RBold='\[\e[21m\]'          # Reset Bold
+RDim='\[\e[22m\]'           # Reset Dim
+RItalic='\[\e[23m\]'        # Reset Italic
+RUnder='\[\e[24m\]'         # Reset Underline
+RBlink='\[\e[25m\]'         # Reset Blink
+RRev='\[\e[27m\]'           # Reset Reverse colours
+RHidden='\[\2e[8m\]'        # Reset Hidden
+
+# Formatting Modes
+Norm='\[\e[0m\]'            # Normal
+Bold='\[\e[1m\]'            # Bold
+Dim='\[\e[2m\]'             # Dim
+Italic='\[\e[3m\]'          # Italic
+Under='\[\e[4m\]'           # Underline
+Blink='\[\e[5m\]'           # Blink
+Rev='\[\e[7m\]'             # Reverse colours
+Hidden='\[\e[8m\]'          # Hidden
+
+# Regular Colors
+Black='\[\e[30m\]'          # Black
+Red='\[\e[31m\]'            # Red
+Green='\[\e[32m\]'          # Green
+Yellow='\[\e[33m\]'         # Yellow
+Blue='\[\e[34m\]'           # Blue
+Purple='\[\e[35m\]'         # Purple
+Cyan='\[\e[36m\]'           # Cyan
+White='\[\e[37m\]'          # White
+
+# Background
+On_Black='\[\e[40m\]'       # Black
+On_Red='\[\e[41m\]'         # Red
+On_Green='\[\e[42m\]'       # Green
+On_Yellow='\[\e[43m\]'      # Yellow
+On_Blue='\[\e[44m\]'        # Blue
+On_Purple='\[\e[45m\]'      # Purple
+On_Cyan='\[\e[46m\]'        # Cyan
+On_White='\[\e[47m\]'       # White
+
+# High Intensity
+IBlack='\[\e[90m\]'         # Black
+IRed='\[\e[91m\]'           # Red
+IGreen='\[\e[92m\]'         # Green
+IYellow='\[\e[93m\]'        # Yellow
+IBlue='\[\e[94m\]'          # Blue
+IPurple='\[\e[95m\]'        # Purple
+ICyan='\[\e[96m\]'          # Cyan
+IWhite='\[\e[97m\]'         # White
+
+# High Intensity backgrounds
+On_IBlack='\[\e[100m\]'     # Black
+On_IRed='\[\e[101m\]'       # Red
+On_IGreen='\[\e[102m\]'     # Green
+On_IYellow='\[\e[103m\]'    # Yellow
+On_IBlue='\[\e[104m\]'      # Blue
+On_IPurple='\[\e[105m\]'    # Purple
+On_ICyan='\[\e[106m\]'      # Cyan
+On_IWhite='\[\e[107m\]'     # White
 
 if [[ ! "${prompt_colors[@]}" ]]; then
   prompt_colors=(
