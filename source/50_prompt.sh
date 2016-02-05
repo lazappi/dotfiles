@@ -100,9 +100,9 @@ if [[ ! "${prompt_colors[@]}" ]]; then
     $Reset                # 0: Reset
     $Bold$Under$IYellow   # 1: user colour
     $Bold$Blue            # 2: path colour
-    $Dim$Cyan             # 3: time colour
+    $Blue                 # 3: time colour
     $Bold$Blue            # 4: prompt colour
-    $Red                  # 5: error colour
+    $Bold$Red             # 5: error colour
   )
 
   if [[ "$SSH_TTY" ]]; then
@@ -122,7 +122,7 @@ alias prompt_getcolors='local i; for i in ${!prompt_colors[@]}; do local c$i="${
 # Exit code of previous command.
 function prompt_exitcode() {
   prompt_getcolors
-  [[ $1 != 0 ]] && echo " $c4$1$c0"
+  [[ $1 != 0 ]] && echo " $c5[Error $1]$c0"
 }
 
 # Git status.
