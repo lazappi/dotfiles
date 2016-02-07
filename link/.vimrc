@@ -2,6 +2,9 @@
 " Setup
 " ===========================
 
+" Don't try to emulate vi
+set nocompatible
+
 " Change mapleader
 let mapleader=","
 
@@ -30,6 +33,7 @@ nnoremap k gk
 " Scrolling
 set scrolloff=3     " Start scrolling three lines before horizontal border of
                     " window.
+set scrolljump=5    " Line to scroll to when cursor leaves screen.
 set sidescrolloff=3 " Start scrolling three columns before vertical border of
                     " window.
 
@@ -62,16 +66,37 @@ imap <PageUp> <C-O><C-U>
 imap <PageDown> <C-O><C-D>
 
 " ===========================
+" Editing
+" ===========================
+
+" Reformatting
+set nojoinspaces " Only insert single space after a '.', '?' and '!' with a
+                 " join command.
+
+" Jump to matching bracket, briefly
+set showmatch
+
+set backspace=indent,eol,start " Backspace deletes over autoindent, end of line
+                               " and start of the current insertion
+
+set t_kb=^? " Fix backspace
+fixdel
+
+" Turn on text completion (use <Ctrl-N>)
+set complete=.,b,u,]
+set wildmode=longest,list:longest
+
+" ===========================
 " Indentation and tabs
 " ===========================
 
 " Indentation
 set autoindent    " Copy indent from last line when starting new line.
-set shiftwidth=2  " The # of spaces for indenting.
+set shiftwidth=4  " The # of spaces for indenting.
 set smarttab      " At start of line, <Tab> inserts shiftwidth spaces, 
                   " <Bs> deletes shiftwidth spaces.
-set softtabstop=2 " Tab key results in 2 spaces
-set tabstop=2     " Tabs indent only 2 spaces
+set softtabstop=4 " Tab key goes in # spaces (but existing tabs stay the same)
+set tabstop=4     " Tabs indent # spaces
 set expandtab     " Expand tabs to spaces
 
 " Toggle show tabs and trailing spaces (,c)
@@ -84,6 +109,9 @@ endif
 "set fillchars=fold:-
 nnoremap <silent> <leader>v :call ToggleInvisibles()<CR>
 
+" Automatic indentation based on file type
+filetype indent on
+
 " ===========================
 " Status line
 " ===========================
@@ -91,6 +119,9 @@ nnoremap <silent> <leader>v :call ToggleInvisibles()<CR>
 set noshowmode   " Don't show the current mode.
                  " (airline.vim takes care of this for us)
 set laststatus=2 " Always show status line
+
+" Custom status line
+"set statusline=%<%f%h%1*%m%*%r%=%3n\ \ %7(%l,%c%)%V\ %P
 
 " ===========================
 " Theme / Syntax highlighting
@@ -106,8 +137,7 @@ autocmd vimrc ColorScheme * :hi Visual guibg=#00588A
 autocmd vimrc ColorScheme * :hi link multiple_cursors_cursor Search
 autocmd vimrc ColorScheme * :hi link multiple_cursors_visual Visual
 
-let g:molokai_italic=0
-colorscheme molokai
+colorscheme koehler
 set background=dark
 
 " ==========================
@@ -121,6 +151,9 @@ set relativenumber " Use relative line numbers.
                    " Current line is still in status bar.
 set title          " Show the filename in the window titlebar.
 set nowrap         " Do not wrap lines.
+
+" Perform syntax highlighting
+syntax enable
 
 " Show absolute numbers in insert mode, otherwise relative line numbers.
 autocmd vimrc InsertEnter * :set norelativenumber
@@ -138,28 +171,6 @@ set colorcolumn=+1
 autocmd vimrc BufWinEnter * :2match ExtraWhitespaceMatch /\s\+$/
 autocmd vimrc InsertEnter * :2match ExtraWhitespaceMatch /\s\+\%#\@<!$/
 autocmd vimrc InsertLeave * :2match ExtraWhitespaceMatch /\s\+$/
-
-" Toggle Invisibles / Show extra whitespace
-function! ToggleInvisibles()
-  set nolist!
-  if &list
-    hi! link ExtraWhitespaceMatch ExtraWhitespace
-  else
-    hi! link ExtraWhitespaceMatch NONE
-  endif
-endfunction
-
-set nolist
-call ToggleInvisibles()
-
-" Trim extra whitespace
-function! StripExtraWhiteSpace()
-  let l = line(".")
-  let c = col(".")
-  %s/\s\+$//e
-  call cursor(l, c)
-endfunction
-noremap <leader>ss :call StripExtraWhiteSpace()<CR>
 
 " ===========================
 " Search / replace
@@ -184,15 +195,14 @@ set wildignore+=*/vendor/*,*/.git/*,*/.hg/*,*/.svn/*,*/log/*,*/tmp/*
 " Vim commands
 " ===========================
 "
-set hidden       " When a buffer is brought to foreground, remember undo
-                 " history and marks.
-set report=0     " Show all changes.
-set mouse=a      " Enable mouse in all modes.
-set shortmess+=I " Hide intro menu.
-
-" Reformatting
-set nojoinspaces " Only insert single space after a '.', '?' and '!' with a
-                 " join command.
+set hidden                   " When a buffer is brought to foreground, remember
+                             " undo history and marks.
+set report=0                 " Show all changes.
+set mouse=a                  " Enable mouse in all modes.
+set selectmode=mouse         " Select using the mouse.
+set shortmess+=I             " Hide intro menu.
+set vb t_vb=                 " Flash instead of beep
+set fileformats=unix,max,dos "auto-detect format based on EOL
 
 " Splits
 set splitbelow   " New split goes below
@@ -209,8 +219,9 @@ autocmd vimrc BufReadPost *
   \   exe "normal g`\"" |
   \ endif
 
-" F12: Source .vimrc & .gvimrc files
-nmap <F12> :call SourceConfigs()<CR>
+" ===========================
+" Functions
+" ==========================
 
 if !exists("*SourceConfigs")
   function! SourceConfigs()
@@ -224,6 +235,46 @@ if !exists("*SourceConfigs")
   endfunction
 endif
 
+" Toggle Invisibles / Show extra whitespace
+function! ToggleInvisibles()
+  set nolist!
+  if &list
+    hi! link ExtraWhitespaceMatch ExtraWhitespace
+  else
+    hi! link ExtraWhitespaceMatch NONE
+  endif
+endfunction
+
+set nolist
+call ToggleInvisibles()
+
+" Trim extra whitespace
+function! StripExtraWhiteSpace()
+  let l = line(".")
+  let c = col(".")
+  %s/\s\+$//e
+  call cursor(l, c)
+endfunction
+
+noremap <leader>ss :call StripExtraWhiteSpace()<CR>
+
+" Toggle formatoptions 'a' for automatic wrapping
+function! ToggleWrapping()
+    if &formatoptions=~'a'
+        echo 'formatoptions a unset' 
+        setlocal formatoptions-=a
+    else
+        echo 'formatoptions a set'
+        setlocal formatoptions+=a
+    endif
+endfunction
+
+
+" F10: Source .vimrc & .gvimrc files
+nmap <F10> :call SourceConfigs()<CR>
+map <c-F11> :call ToggleWrapping()<CR>
+map <c-F12> :echo 'Current time is ' . strftime('%c')<CR>
+
 " ===========================
 " File types
 " ===========================
@@ -233,6 +284,36 @@ autocmd vimrc BufRead .vimrc,*.vim set keywordprg=:help
 
 " markdown
 autocmd vimrc BufRead,BufNewFile *.md set filetype=markdown
+
+" Makefiles
+" Make sure TABs work as TABS
+autocmd FileType make setlocal noexpandtab
+autocmd FileType make setlocal softtabstop=0
+
+" C
+" indentation options for C indenting.
+"     :0  -- case labels are indented 0 spaces in from switch
+"     (2  -- indent 2 spaces within unclosed parentheses
+"     m1  -- line up close parentheses with start of opening line
+" there are _many_ more options; do ":help cinoptions-values" to see them
+set cinoptions=:0,(2,m1
+
+" Perl
+let perl_include_pod=1
+let perl_extended_vars=1
+
+" Handlebars
+au Bufread,BufNewFile *.handlebars,*.hbs set ft=html syntax=handlebars
+
+" LaTeX
+" Turn on spell check
+autocmd Bufread,BufNewFile *.tex, setlocal spell spelllang=en_au
+" Text wrapping
+autocmd Bufread,BufNewFile *.tex, setlocal spell textwidth=80
+" Wrap paragraphs using text width, see h:fo-table
+autocmd Bufread,BufNewFile *.tex, setlocal spell formatoptions=qt
+" Add dictionary words to tab complete
+autocmd Bufread,BufNewFile *.tex, setlocal spell complete+=kspell
 
 " ===========================
 " Plugins
