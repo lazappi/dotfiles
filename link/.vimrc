@@ -326,15 +326,6 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-commentary'
 Plug 'nathanaelkane/vim-indent-guides'
-" Plug 'pangloss/vim-javascript', {'for': 'javascript'}
-" Plug 'mhinz/vim-signify'
-" Plug 'mattn/emmet-vim'
-" Plug 'mustache/vim-mustache-handlebars'
-" Plug 'chase/vim-ansible-yaml'
-" Plug 'wavded/vim-stylus'
-" Plug 'klen/python-mode', {'for': 'python'}
-" Plug 'terryma/vim-multiple-cursors'
-" Plug 'wting/rust.vim', {'for': 'rust'}
 call plug#end()
 
 " Airline
@@ -351,34 +342,3 @@ let g:indent_guides_auto_colors = 0
 autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=grey   ctermbg=4
 autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=white ctermbg=12
 
-" NERDTree
-"let NERDTreeShowHidden = 1
-"let NERDTreeMouseMode = 2
-"let NERDTreeMinimalUI = 1
-"map <leader>n :NERDTreeToggle<CR>
-"autocmd vimrc StdinReadPre * let s:std_in=1
-"" If no file or directory arguments are specified, open NERDtree.
-"" If a directory is specified as the only argument, open it in NERDTree.
-"autocmd vimrc VimEnter *
-"  \ if argc() == 0 && !exists("s:std_in") |
-"  \   NERDTree |
-"  \ elseif argc() == 1 && isdirectory(argv(0)) |
-"  \   bd |
-"  \   exec 'cd' fnameescape(argv(0)) |
-"  \   NERDTree |
-"  \ end
-
-" Signify
-"let g:signify_vcs_list = ['git', 'hg', 'svn']
-
-" CtrlP.vim
-"map <leader>p <C-P>
-"map <leader>r :CtrlPMRUFiles<CR>
-"let g:ctrlp_match_window_bottom = 0 " Show at top of window
-
-" Indent Guides
-"let g:indent_guides_start_level = 2
-"let g:indent_guides_guide_size = 1
-
-" Mustache/handlebars
-"let g:mustache_abbreviations = 1
