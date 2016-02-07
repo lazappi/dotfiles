@@ -202,7 +202,7 @@ set mouse=a                  " Enable mouse in all modes.
 set selectmode=mouse         " Select using the mouse.
 set shortmess+=I             " Hide intro menu.
 set vb t_vb=                 " Flash instead of beep
-set fileformats=unix,max,dos "auto-detect format based on EOL
+set fileformats=unix,mac,dos "auto-detect format based on EOL
 
 " Splits
 set splitbelow   " New split goes below
