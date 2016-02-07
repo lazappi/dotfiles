@@ -324,28 +324,23 @@ autocmd Bufread,BufNewFile *.tex, setlocal spell complete+=kspell
 call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-"Plug 'tpope/vim-sensible'
-"Plug 'tpope/vim-surround'
-"Plug 'tpope/vim-fugitive'
-"Plug 'tpope/vim-vinegar'
-"Plug 'tpope/vim-repeat'
-"Plug 'tpope/vim-commentary'
-"Plug 'tpope/vim-unimpaired'
-"Plug 'tpope/vim-eunuch'
-"Plug 'scrooloose/nerdtree'
-"Plug 'ctrlpvim/ctrlp.vim'
-"Plug 'editorconfig/editorconfig-vim'
-"Plug 'fatih/vim-go', {'for': 'go'}
-"Plug 'nathanaelkane/vim-indent-guides'
-"Plug 'pangloss/vim-javascript', {'for': 'javascript'}
-"Plug 'mhinz/vim-signify'
-"Plug 'mattn/emmet-vim'
-"Plug 'mustache/vim-mustache-handlebars'
-"Plug 'chase/vim-ansible-yaml'
-"Plug 'wavded/vim-stylus'
-"Plug 'klen/python-mode', {'for': 'python'}
-"Plug 'terryma/vim-multiple-cursors'
-"Plug 'wting/rust.vim', {'for': 'rust'}
+Plug 'tpope/vim-commentary'
+" Plug 'tpope/vim-unimpaired'
+" Plug 'tpope/vim-eunuch'
+" Plug 'scrooloose/nerdtree'
+" Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'editorconfig/editorconfig-vim'
+" Plug 'fatih/vim-go', {'for': 'go'}
+" Plug 'nathanaelkane/vim-indent-guides'
+" Plug 'pangloss/vim-javascript', {'for': 'javascript'}
+" Plug 'mhinz/vim-signify'
+" Plug 'mattn/emmet-vim'
+" Plug 'mustache/vim-mustache-handlebars'
+" Plug 'chase/vim-ansible-yaml'
+" Plug 'wavded/vim-stylus'
+" Plug 'klen/python-mode', {'for': 'python'}
+" Plug 'terryma/vim-multiple-cursors'
+" Plug 'wting/rust.vim', {'for': 'rust'}
 call plug#end()
 
 " Airline
