@@ -78,8 +78,7 @@ set showmatch
 
 set backspace=indent,eol,start " Backspace deletes over autoindent, end of line
                                " and start of the current insertion
-
-set t_kb=^? " Fix backspace
+set t_kb=
 fixdel
 
 " Turn on text completion (use <Ctrl-N>)
