@@ -150,6 +150,7 @@ set relativenumber " Use relative line numbers.
                    " Current line is still in status bar.
 set title          " Show the filename in the window titlebar.
 set nowrap         " Do not wrap lines.
+set t_Co=256       " Turn on colours.
 
 " Perform syntax highlighting
 syntax enable
@@ -318,13 +319,42 @@ autocmd Bufread,BufNewFile *.tex, setlocal spell complete+=kspell
 " Plugins
 " ===========================
 
+" https://github.com/junegunn/vim-plug
+" Reload .vimrc and :PlugInstall to install plugins.
+call plug#begin('~/.vim/plugged')
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+"Plug 'tpope/vim-sensible'
+"Plug 'tpope/vim-surround'
+"Plug 'tpope/vim-fugitive'
+"Plug 'tpope/vim-vinegar'
+"Plug 'tpope/vim-repeat'
+"Plug 'tpope/vim-commentary'
+"Plug 'tpope/vim-unimpaired'
+"Plug 'tpope/vim-eunuch'
+"Plug 'scrooloose/nerdtree'
+"Plug 'ctrlpvim/ctrlp.vim'
+"Plug 'editorconfig/editorconfig-vim'
+"Plug 'fatih/vim-go', {'for': 'go'}
+"Plug 'nathanaelkane/vim-indent-guides'
+"Plug 'pangloss/vim-javascript', {'for': 'javascript'}
+"Plug 'mhinz/vim-signify'
+"Plug 'mattn/emmet-vim'
+"Plug 'mustache/vim-mustache-handlebars'
+"Plug 'chase/vim-ansible-yaml'
+"Plug 'wavded/vim-stylus'
+"Plug 'klen/python-mode', {'for': 'python'}
+"Plug 'terryma/vim-multiple-cursors'
+"Plug 'wting/rust.vim', {'for': 'rust'}
+call plug#end()
+
 " Airline
-"let g:airline_powerline_fonts = 1 " TODO: detect this?
-"let g:airline#extensions#tabline#enabled = 1
-"let g:airline#extensions#tabline#buffer_nr_format = '%s '
-"let g:airline#extensions#tabline#buffer_nr_show = 1
-""let g:airline#extensions#tabline#fnamecollapse = 0
-""let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline_powerline_fonts = 1 " TODO: detect this?
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#buffer_nr_format = '%s '
+let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline_theme = 'luna'
 
 " NERDTree
 "let NERDTreeShowHidden = 1
@@ -358,30 +388,4 @@ autocmd Bufread,BufNewFile *.tex, setlocal spell complete+=kspell
 " Mustache/handlebars
 "let g:mustache_abbreviations = 1
 
-" https://github.com/junegunn/vim-plug
-" Reload .vimrc and :PlugInstall to install plugins.
-"call plug#begin('~/.vim/plugged')
-"Plug 'bling/vim-airline'
-"Plug 'tpope/vim-sensible'
-"Plug 'tpope/vim-surround'
-"Plug 'tpope/vim-fugitive'
-"Plug 'tpope/vim-vinegar'
-"Plug 'tpope/vim-repeat'
-"Plug 'tpope/vim-commentary'
-"Plug 'tpope/vim-unimpaired'
-"Plug 'tpope/vim-eunuch'
-"Plug 'scrooloose/nerdtree'
-"Plug 'ctrlpvim/ctrlp.vim'
-"Plug 'editorconfig/editorconfig-vim'
-"Plug 'fatih/vim-go', {'for': 'go'}
-"Plug 'nathanaelkane/vim-indent-guides'
-"Plug 'pangloss/vim-javascript', {'for': 'javascript'}
-"Plug 'mhinz/vim-signify'
-"Plug 'mattn/emmet-vim'
-"Plug 'mustache/vim-mustache-handlebars'
-"Plug 'chase/vim-ansible-yaml'
-"Plug 'wavded/vim-stylus'
-"Plug 'klen/python-mode', {'for': 'python'}
-"Plug 'terryma/vim-multiple-cursors'
-"Plug 'wting/rust.vim', {'for': 'rust'}
-"call plug#end()
+
