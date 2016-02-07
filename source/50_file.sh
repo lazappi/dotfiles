@@ -21,7 +21,7 @@ else
 fi
 
 # File removing
-alias rm=rm -I
+alias rm='rm -I'
 
 # Easier navigation: .., ..., -
 alias ..='cd ..'
