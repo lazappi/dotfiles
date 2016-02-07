@@ -325,13 +325,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-commentary'
-" Plug 'tpope/vim-unimpaired'
-" Plug 'tpope/vim-eunuch'
-" Plug 'scrooloose/nerdtree'
-" Plug 'ctrlpvim/ctrlp.vim'
-" Plug 'editorconfig/editorconfig-vim'
-" Plug 'fatih/vim-go', {'for': 'go'}
-" Plug 'nathanaelkane/vim-indent-guides'
+Plug 'nathanaelkane/vim-indent-guides'
 " Plug 'pangloss/vim-javascript', {'for': 'javascript'}
 " Plug 'mhinz/vim-signify'
 " Plug 'mattn/emmet-vim'
@@ -350,6 +344,12 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#tabline#buffer_nr_format = '%s '
 let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline_theme = 'luna'
+
+" Indent guides
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_auto_colors = 0
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=grey   ctermbg=4
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=white ctermbg=12
 
 " NERDTree
 "let NERDTreeShowHidden = 1
@@ -382,5 +382,3 @@ let g:airline_theme = 'luna'
 
 " Mustache/handlebars
 "let g:mustache_abbreviations = 1
-
-
