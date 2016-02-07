@@ -8,7 +8,7 @@ set nocompatible
 " Change mapleader
 let mapleader=","
 
-" Local dirs
+" Local dirs for storing swap and backup files
 if !has('win32')
   set backupdir=$DOTFILES/caches/vim
   set directory=$DOTFILES/caches/vim
