@@ -156,7 +156,7 @@ set t_Co=256       " Turn on colours.
 syntax enable
 
 " Show absolute numbers in insert mode, otherwise relative line numbers.
-autocmd vimrc InsertEnter * :set norelativenumber
+autocmd vimrc InsertEnter * :set number
 autocmd vimrc InsertLeave * :set relativenumber
 
 " Make it obvious where 80 characters is
