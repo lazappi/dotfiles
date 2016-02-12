@@ -1,4 +1,10 @@
+#!/usr/bin/env bash
+
 echo "Welcome!"
 
 # Tell a fortune with a random cow
-fortune | cowsay -f `ls /usr/share/cowsay/cows/ | shuf -n 1`
+if [[ "$OSTYPE" =~ ^darwin ]]; then
+    fortune | cowsay -f `ls /usr/local/share/cows/ | gshuf -n 1`
+else
+    fortune | cowsay -f `ls /usr/share/cowsay/cows/ | shuf -n 1`
+fi
