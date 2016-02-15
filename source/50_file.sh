@@ -21,7 +21,11 @@ else
 fi
 
 # File removing
-alias rm='rm -I'
+if is_osx; then
+  alias rm='grm -I'
+else
+  alias rm='rm -I'
+fi
 
 # Easier navigation: .., ..., -
 alias ..='cd ..'
