@@ -12,7 +12,10 @@ let mapleader=","
 if !has('win32')
   set backupdir=$DOTFILES/caches/vim
   set directory=$DOTFILES/caches/vim
-  set undodir=$DOTFILES/caches/vim
+  if has('persistent_undo')
+    set undofile
+    set undodir=$DOTFILES/caches/vim
+  endif
   let g:netrw_home = expand('$DOTFILES/caches/vim')
 endif
 
@@ -146,22 +149,27 @@ set background=dark
 set cursorline     " Highlight current line
 set number         " Enable line numbers.
 set showtabline=4  " Always show tab bar.
-set relativenumber " Use relative line numbers.
-                   " Current line is still in status bar.
 set title          " Show the filename in the window titlebar.
 set nowrap         " Do not wrap lines.
 set t_Co=256       " Turn on colours.
+
+if exists('+relativenumber')
+    set relativenumber " Use relative line numbers.
+                       " Current line is still in status bar.
+endif
 
 " Perform syntax highlighting
 syntax enable
 
 " Show absolute numbers in insert mode, otherwise relative line numbers.
 autocmd vimrc InsertEnter * :set number
-autocmd vimrc InsertLeave * :set relativenumber
+autocmd vimrc InsertLeave * if exists('+relativenumber') | :set relativenumber | endif
 
 " Make it obvious where 80 characters is
 set textwidth=80
-set colorcolumn=+1
+if exists('+colorcolumn')
+  set colorcolumn=+1
+endif
 
 " ===========================
 " Whitespace
