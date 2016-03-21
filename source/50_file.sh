@@ -3,6 +3,9 @@
 # dirs  755 drwxr-xr-x (777 minus 022)
 umask 022
 
+# Add home bin to PATH
+export PATH=~/bin:$PATH
+
 # Always use color output for `ls`
 if is_osx; then
   alias ls="command ls -G"
