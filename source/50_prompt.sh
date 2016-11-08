@@ -84,6 +84,7 @@ if [[ ! "${prompt_colors[@]}" ]]; then
     $Bold$Blue            # 4: prompt colour
     $Bold$Cyan            # 5: git colour
     $Bold$Red             # 6: error colour
+    $Bold$Purple           # 7: timer colour
   )
 
   if [[ "$SSH_TTY" ]]; then
@@ -104,6 +105,31 @@ alias prompt_getcolors='local i; for i in ${!prompt_colors[@]}; do local c$i="${
 function prompt_exitcode() {
   prompt_getcolors
   [[ $1 != 0 ]] && echo " $c6[Error $1]$c0"
+}
+
+# Showing the runtime of the last command; adapted from
+# http://jakemccrary.com/blog/2015/05/03/put-the-last-commands-run-time-in-your-bash-prompt/
+# https://github.com/gfredericks/dotfiles/base/.bashrc.base.symlink
+function timer_start() {
+  timer=${timer:-$SECONDS}
+}
+
+function timer_stop() {
+  the_seconds=$(($SECONDS - $timer))
+  unset timer
+}
+
+function prompt_timer() {
+  prompt_getcolors
+  timer_stop
+
+  # Hide results if the_seconds is small
+  if [[ $the_seconds > 3 ]]; then
+    timer_show="`format-duration seconds $the_seconds`"
+    echo "$c7[last: ${timer_show}]$c0 "
+  else
+    echo ""
+  fi
 }
 
 # Git status.
@@ -130,7 +156,7 @@ function prompt_git() {
 
 # Maintain a per-execution call stack.
 prompt_stack=()
-trap 'prompt_stack=("${prompt_stack[@]}" "$BASH_COMMAND")' DEBUG
+trap 'prompt_stack=("${prompt_stack[@]}" "$BASH_COMMAND"); timer_start' DEBUG
 
 function prompt_command() {
   local exit_code=$?
@@ -152,6 +178,9 @@ function prompt_command() {
   PS1="$PS1$c1\u@\h:$c0 "
   # git: [branch:flags]
   PS1="$PS1$(prompt_git)"
+  # timer
+  PS1="$PS1$(prompt_timer)"
+  unset timer
   # path
   PS1="$PS1$c2\w$c0"
   PS1="$PS1\n"
