@@ -84,7 +84,8 @@ if [[ ! "${prompt_colors[@]}" ]]; then
     $Bold$Blue            # 4: prompt colour
     $Bold$Cyan            # 5: git colour
     $Bold$Red             # 6: error colour
-    $Bold$Purple           # 7: timer colour
+    $Bold$Purple          # 7: timer colour
+    $Bold$Green           # 8: conda colour
   )
 
   if [[ "$SSH_TTY" ]]; then
@@ -154,6 +155,16 @@ function prompt_git() {
   echo "$c5[$output]$c0 "
 }
 
+# conda environment
+# Adapted from
+# https://github.com/bryanwweber/dot-files/blob/master/macos.bash_profile#L16
+function prompt_conda() {
+    prompt_getcolors
+    if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
+        echo "$c8[$CONDA_DEFAULT_ENV]$c0 "
+    fi
+}
+
 # Maintain a per-execution call stack.
 prompt_stack=()
 trap 'prompt_stack=("${prompt_stack[@]}" "$BASH_COMMAND"); timer_start' DEBUG
@@ -176,6 +187,8 @@ function prompt_command() {
   PS1="" # PS1="\n" for newline before prompt
   # user@host:
   PS1="$PS1$c1\u@\h:$c0 "
+  # conda: [env]
+  PS1="$PS1$(prompt_conda)"
   # git: [branch:flags]
   PS1="$PS1$(prompt_git)"
   # timer
