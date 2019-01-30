@@ -161,7 +161,9 @@ function prompt_git() {
 function prompt_conda() {
     prompt_getcolors
     if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
-        echo "$c8[$CONDA_DEFAULT_ENV]$c0 "
+        if [ "$CONDA_DEFAULT_ENV" != "base" ]; then
+            echo "$c8[$CONDA_DEFAULT_ENV]$c0 "
+        fi
     fi
 }
 
