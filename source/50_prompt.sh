@@ -193,7 +193,7 @@ function prompt_command() {
 
 PROMPT_COMMAND="prompt_command"
 # Share history across windows
-PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+# PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 # Trim number of directory levels shown
 PROMPT_DIRTRIM=3
