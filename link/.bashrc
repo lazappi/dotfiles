@@ -24,8 +24,6 @@ function dotfiles() {
 
 PATH=~/bin:$PATH
 export PATH
-# added by Anaconda2 2.5.0 installer
-export PATH="/home/luke/anaconda2/bin:$PATH"
 
 src
 
