@@ -86,7 +86,6 @@ if [[ ! "${prompt_colors[@]}" ]]; then
     $Bold$Red             # 6: error colour
     $Bold$Purple          # 7: timer colour
     $Bold$Green           # 8: conda colour
-    $On_IGreen            # 9: virtualenv colour
   )
 
   if [[ "$SSH_TTY" ]]; then
@@ -162,17 +161,12 @@ function prompt_git() {
 function prompt_conda() {
     prompt_getcolors
     if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
-        echo "$c8[$CONDA_DEFAULT_ENV]$c0 "
+        if [ "$CONDA_DEFAULT_ENV" != "base" ]; then
+            echo "$c8[$CONDA_DEFAULT_ENV]$c0 "
+        fi
     fi
 }
 
-# virtualenv environment
-function prompt_virtualenv() {
-    prompt_getcolors
-    if [ ! -z "$VIRTUAL_ENV" ]; then
-        echo "$c9[$VIRTUAL_ENV]$c0 "
-    fi
-}
 # Maintain a per-execution call stack.
 prompt_stack=()
 trap 'prompt_stack=("${prompt_stack[@]}" "$BASH_COMMAND"); timer_start' DEBUG
@@ -197,8 +191,6 @@ function prompt_command() {
   PS1="$PS1$c1\u@\h:$c0 "
   # conda: [env]
   PS1="$PS1$(prompt_conda)"
-  # virtualenv: [env]
-  PS1="$PS1$(prompt_virtualenv)"
   # git: [branch:flags]
   PS1="$PS1$(prompt_git)"
   # path
