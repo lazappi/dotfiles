@@ -84,7 +84,9 @@ if [[ ! "${prompt_colors[@]}" ]]; then
     $Bold$Blue            # 4: prompt colour
     $Bold$Cyan            # 5: git colour
     $Bold$Red             # 6: error colour
-    $Bold$Purple           # 7: timer colour
+    $Bold$Purple          # 7: timer colour
+    $Bold$Green           # 8: conda colour
+    $On_IGreen            # 9: virtualenv colour
   )
 
   if [[ "$SSH_TTY" ]]; then
@@ -104,7 +106,7 @@ alias prompt_getcolors='local i; for i in ${!prompt_colors[@]}; do local c$i="${
 # Exit code of previous command.
 function prompt_exitcode() {
   prompt_getcolors
-  [[ $1 != 0 ]] && echo " $c6[Error $1]$c0"
+  [[ $1 != 0 ]] && echo "$c6[Error $1]$c0 "
 }
 
 # Showing the runtime of the last command; adapted from
@@ -154,6 +156,23 @@ function prompt_git() {
   echo "$c5[$output]$c0 "
 }
 
+# conda environment
+# Adapted from
+# https://github.com/bryanwweber/dot-files/blob/master/macos.bash_profile#L16
+function prompt_conda() {
+    prompt_getcolors
+    if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
+        echo "$c8[$CONDA_DEFAULT_ENV]$c0 "
+    fi
+}
+
+# virtualenv environment
+function prompt_virtualenv() {
+    prompt_getcolors
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        echo "$c9[$VIRTUAL_ENV]$c0 "
+    fi
+}
 # Maintain a per-execution call stack.
 prompt_stack=()
 trap 'prompt_stack=("${prompt_stack[@]}" "$BASH_COMMAND"); timer_start' DEBUG
@@ -176,24 +195,28 @@ function prompt_command() {
   PS1="" # PS1="\n" for newline before prompt
   # user@host:
   PS1="$PS1$c1\u@\h:$c0 "
+  # conda: [env]
+  PS1="$PS1$(prompt_conda)"
+  # virtualenv: [env]
+  PS1="$PS1$(prompt_virtualenv)"
   # git: [branch:flags]
   PS1="$PS1$(prompt_git)"
-  # timer
-  PS1="$PS1$(prompt_timer)"
-  unset timer
   # path
   PS1="$PS1$c2\w$c0"
   PS1="$PS1\n"
   # date: [HH:MM:SS]
-  PS1="$PS1$c3$(date +"%H:%M:%S")$c0"
-  # exit code: 127
+  PS1="$PS1$c3$(date +"%H:%M:%S")$c0 "
+  # timer: [last: time]
+  PS1="$PS1$(prompt_timer)"
+  unset timer
+  # exit code: [Error 127]
   PS1="$PS1$(prompt_exitcode "$exit_code")"
-  PS1="$PS1 $c4\$$c0 "
+  PS1="$PS1$c4\$$c0 "
 }
 
 PROMPT_COMMAND="prompt_command"
 # Share history across windows
-PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+# PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 # Trim number of directory levels shown
 PROMPT_DIRTRIM=3
