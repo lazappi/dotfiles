@@ -1,10 +1,102 @@
 #!/usr/bin/env bash
 
-echo "Welcome!"
-
 # Tell a fortune with a random cow
+# if [[ "$OSTYPE" =~ ^darwin ]]; then
+#     fortune | cowsay -f `ls /usr/local/share/cows/ | gshuf -n 1`
+# else
+#     # fortune | cowsay -f `ls /usr/share/cowsay/cows/ | shuf -n 1`
+#     fortune | cowsay -f `ls ~/.linuxbrew/share/cows/ | shuf -n 1`
+# fi
+
+# Get uptime
 if [[ "$OSTYPE" =~ ^darwin ]]; then
-    fortune | cowsay -f `ls /usr/local/share/cows/ | gshuf -n 1`
+    boottime=`sysctl -n kern.boottime | awk '{print $4}' | sed 's/,//g'`
+    unixtime=`date +%s`
+    up_seconds=$(($unixtime - $boottime))
 else
-    fortune | cowsay -f `ls /usr/share/cowsay/cows/ | shuf -n 1`
+    up_seconds="$(/usr/bin/cut -d. -f1 /proc/uptime)"
 fi
+secs=$((${up_seconds} % 60))
+mins=$((${up_seconds} / 60 % 60))
+hours=$((${up_seconds} / 3600 % 24))
+days=$((${up_seconds} / 86400))
+UPTIME=`printf "%d days, %02d hours, %02d minutes, %02d seconds" "$days" "$hours" "$mins" "$secs"`
+
+# Get logins
+SESSIONS=`who | wc -l | tr -d '[:space:]'`
+USERS=`who | cut -d " " -f 1 | sort -u | wc -l | tr -d '[:space:]'`
+
+# Get IP address
+if [[ "$OSTYPE" =~ ^darwin ]]; then
+    IP=`ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}'`
+else
+    IP=`ip a | grep glo | awk '{print $2}' | head -1 | cut -f1 -d/`
+fi
+
+# Get memory usage
+if [[ "$OSTYPE" =~ ^darwin ]]; then
+    PAGESIZE=`getconf PAGESIZE`
+    PG_ACTIVE=`vm_stat | grep "Pages active" | awk {'print $3'} | tr -d '[\.]'`
+    PG_INACT=`vm_stat | grep "Pages inactive" | awk {'print $3'} | tr -d '[\.]'`
+    PG_WIRED=`vm_stat | grep "Pages wired" | awk {'print $4'} | tr -d '[\.]'`
+    PG_USED=$((PG_ACTIVE + PG_INACT + PG_WIRED))
+    MEM_USED=$((PAGESIZE * PG_USED))
+    MEM_TOT=`sysctl -n hw.memsize`
+    MEM_FREE=$((MEM_TOT - MEM_USED))
+    MEM_TOT=`numfmt --from=iec --to=iec --suffix=B ${MEM_TOT}`
+    MEM_FREE=`numfmt --from=iec --to=iec --suffix=B ${MEM_FREE}`
+    MEM_STR="$MEM_FREE, $MEM_TOT (free, total)"
+
+    SWAP_TOT=`sysctl -n vm.swapusage | awk {'print $3'}`
+    SWAP_FREE=`sysctl -n vm.swapusage | awk {'print $9'}`
+else
+    MEM_FREE=`cat /proc/meminfo | grep MemFree | awk {'print $2'}`
+    MEM_FREE=`numfmt --from=iec --to=iec --suffix=B ${MEM_FREE}K`
+    MEM_AVL=`cat /proc/meminfo | grep MemAvailable | awk {'print $2'}`
+    MEM_AVL=`numfmt --from=iec --to=iec --suffix=B ${MEM_AVL}K`
+    MEM_TOT=`cat /proc/meminfo | grep MemTotal | awk {'print $2'}`
+    MEM_TOT=`numfmt --from=iec --to=iec --suffix=B ${MEM_TOT}K`
+    MEM_STR="$MEM_FREE, $MEM_AVL, $MEM_TOT (free, available, total)"
+
+    SWAP_FREE=`cat /proc/meminfo | grep SwapFree | awk {'print $2'}`
+    SWAP_FREE=`numfmt --from=iec --to=iec --suffix=B ${SWAP_FREE}K`
+    SWAP_TOT=`cat /proc/meminfo | grep SwapTotal | awk {'print $2'}`
+    SWAP_TOT=`numfmt --from=iec --to=iec --suffix=B ${SWAP_TOT}K`
+fi
+# Get CPUs
+if [[ "$OSTYPE" =~ ^darwin ]]; then
+    CPUS=`sysctl -n hw.ncpu`
+else
+    CPUS=`lscpu | grep -m 1 'CPU(s)' | awk {'print $2'}`
+fi
+
+# Read load averages
+if [[ "$OSTYPE" =~ ^darwin ]]; then
+    UP_STR=`uptime`
+    LOAD1=`echo ${UP_STR} | awk {'print $8'}`
+    LOAD5=`echo ${UP_STR} | awk {'print $9'}`
+    LOAD15=`echo ${UP_STR} | awk {'print $10'}`
+else
+    read LOAD1 LOAD5 LOAD15 LOAD_REST < /proc/loadavg
+fi
+
+date +'%A, %e %B %Y, %r' | lolcat
+figlet ${HOSTNAME%%.*} | lolcat
+fortune -n 300 -s | lolcat --animate --speed=50
+echo
+echo "Welcome `whoami`!" | lolcat
+echo
+
+echo "------------------ CURRENT STATUS ------------------" | lolcat
+STATUS=""
+STATUS+="Hostname (IP)......: ${HOSTNAME} (${IP})\n"
+STATUS+="System.............: `uname -srm`\n"
+STATUS+="Uptime.............: ${UPTIME}\n"
+STATUS+="Logged in..........: ${USERS} users with ${SESSIONS} sessions\n"
+STATUS+="Memory.............: $MEM_STR\n"
+STATUS+="Swap...............: ${SWAP_FREE}, ${SWAP_TOT} (free, total)\n"
+STATUS+="CPUs...............: ${CPUS}\n"
+STATUS+="Load Averages......: ${LOAD1}, ${LOAD5}, ${LOAD15} (1, 5, 15 min)\n"
+STATUS+="Running Processes..: `ps ax | wc -l | tr -d ' '`\n"
+printf "${STATUS}" | lolcat
+echo "----------------------------------------------------" | lolcat
