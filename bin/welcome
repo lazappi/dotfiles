@@ -8,6 +8,24 @@
 #     fortune | cowsay -f `ls ~/.linuxbrew/share/cows/ | shuf -n 1`
 # fi
 
+# Check lolcat
+HAS_LOLCAT=false
+if [ -x "$(command -v lolcat)" ]; then
+    echo "" | lolcat >/dev/null 2>&1
+    retVal=$?
+    if [ $retVal -eq 0 ]; then
+        HAS_LOLCAT=true
+    fi
+fi
+
+function printer {
+    if [ "$HAS_LOLCAT" = true ]; then
+        echo $@ | lolcat
+    else
+        echo $@
+    fi
+}
+
 # Get uptime
 if [[ "$OSTYPE" =~ ^darwin ]]; then
     boottime=`sysctl -n kern.boottime | awk '{print $4}' | sed 's/,//g'`
@@ -80,14 +98,19 @@ else
     read LOAD1 LOAD5 LOAD15 LOAD_REST < /proc/loadavg
 fi
 
-date +'%A, %e %B %Y, %r' | lolcat
-figlet ${HOSTNAME%%.*} | lolcat
-fortune -n 300 -s | lolcat --animate --speed=50
+printer `date +'%A, %e %B %Y, %r'`
+if [ "$HAS_LOLCAT" = true ]; then
+    figlet ${HOSTNAME%%.*} | lolcat
+    fortune -n 300 -s | lolcat --animate --speed=50
+else
+    figlet ${HOSTNAME%%.*}
+    fortune -n 300 -s
+fi
 echo
-echo "Welcome `whoami`!" | lolcat
+printer "Welcome `whoami`!"
 echo
 
-echo "------------------ CURRENT STATUS ------------------" | lolcat
+printer "------------------ CURRENT STATUS ------------------"
 STATUS=""
 STATUS+="Hostname (IP)......: ${HOSTNAME} (${IP})\n"
 STATUS+="System.............: `uname -srm`\n"
@@ -98,5 +121,9 @@ STATUS+="Swap...............: ${SWAP_FREE}, ${SWAP_TOT} (free, total)\n"
 STATUS+="CPUs...............: ${CPUS}\n"
 STATUS+="Load Averages......: ${LOAD1}, ${LOAD5}, ${LOAD15} (1, 5, 15 min)\n"
 STATUS+="Running Processes..: `ps ax | wc -l | tr -d ' '`\n"
-printf "${STATUS}" | lolcat
-echo "----------------------------------------------------" | lolcat
+if [ "$HAS_LOLCAT" = true ]; then
+    printf "${STATUS}" | lolcat
+else
+    printf "${STATUS}"
+fi
+printer "----------------------------------------------------"
