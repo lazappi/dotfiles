@@ -100,7 +100,7 @@ fi
 
 # Inside a prompt function, run this alias to setup local $c0-$c9 color vars.
 # Sets up local variables that can be used by function
-alias __prompt_get_colors='__prompt_colors[9]=; local i; for i in ${!__prompt_colors[@]}; do local c$i="\[\e[0;${__prompt_colors[$i]}m\]"; done'
+alias __prompt_get_colors='__prompt_colors[9]=; local i; for i in ${!__prompt_colors[@]}; do local c$i="${__prompt_colors[$i]}"; done'
 
 # Exit code of previous command.
 function __prompt_exitcode() {
