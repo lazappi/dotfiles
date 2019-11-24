@@ -7,14 +7,23 @@ is_osx || return 1
 # Homebrew recipes
 recipes=(
   bash
+  cmatrix
   coreutils
   cowsay
+  figlet
   fortune
   git
   git-extras
   htop-osx
+  hub
+  jq
   lesspipe
+  lolcat
+  man2html
   sl
+  ssh-copy-id
+  the_silver_searcher
+  thefuck
   tree
   wget
 )
