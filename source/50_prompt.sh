@@ -75,8 +75,8 @@ On_IWhite='\[\e[107m\]'     # White
 
 # Set colours
 
-if [[ ! "${prompt_colors[@]}" ]]; then
-  prompt_colors=(
+if [[ ! "${__prompt_colors[@]}" ]]; then
+  __prompt_colors=(
     $Reset                # 0: Reset
     $Bold$Under$Yellow    # 1: user colour
     $Bold$Blue            # 2: path colour
@@ -90,39 +90,39 @@ if [[ ! "${prompt_colors[@]}" ]]; then
 
   if [[ "$SSH_TTY" ]]; then
     # connected via ssh
-    prompt_colors[1]=$Bold$Under$Cyan
+    __prompt_colors[1]=$Bold$Under$Cyan
   elif [[ "$USER" == "root" ]]; then
     # logged in as root
-    prompt_colors[1]=$Bold$Under$Green
+    __prompt_colors[1]=$Bold$Under$Green
   fi
 
 fi
 
 # Inside a prompt function, run this alias to setup local $c0-$c9 color vars.
 # Sets up local variables that can be used by function
-alias prompt_getcolors='local i; for i in ${!prompt_colors[@]}; do local c$i="${prompt_colors[$i]}"; done'
+alias __prompt_get_colors='__prompt_colors[9]=; local i; for i in ${!__prompt_colors[@]}; do local c$i="\[\e[0;${__prompt_colors[$i]}m\]"; done'
 
 # Exit code of previous command.
-function prompt_exitcode() {
-  prompt_getcolors
+function __prompt_exitcode() {
+  __prompt_get_colors
   [[ $1 != 0 ]] && echo "$c6[Error $1]$c0 "
 }
 
 # Showing the runtime of the last command; adapted from
 # http://jakemccrary.com/blog/2015/05/03/put-the-last-commands-run-time-in-your-bash-prompt/
 # https://github.com/gfredericks/dotfiles/base/.bashrc.base.symlink
-function timer_start() {
+function __timer_start() {
   timer=${timer:-$SECONDS}
 }
 
-function timer_stop() {
+function __timer_stop() {
   the_seconds=$(($SECONDS - $timer))
   unset timer
 }
 
-function prompt_timer() {
-  prompt_getcolors
-  timer_stop
+function __prompt_timer() {
+  __prompt_get_colors
+  __timer_stop
 
   # Hide results if the_seconds is small
   if [[ $the_seconds > 3 ]]; then
@@ -134,14 +134,14 @@ function prompt_timer() {
 }
 
 # Git status.
-function prompt_git() {
-  prompt_getcolors
-  local status output flags branch
+function __prompt_git() {
+  __prompt_get_colors
+  local status branch flags
   status="$(git status 2>/dev/null)"
-  [[ $? != 0 ]] && return;
-  output="$(echo "$status" | awk '/# Initial commit/ {print "(init)"}')"
-  [[ "$output" ]] || output="$(echo "$status" | awk '/# On branch/ {print $4}')"
-  [[ "$output" ]] || output="$(git branch | perl -ne '/^\* \(detached from (.*)\)$/ ? print "($1)" : /^\* (.*)/ && print $1')"
+  [[ $? != 0 ]] && return 1;
+  branch="$(echo "$status" | awk '/# Initial commit/ {print "(init)"}')"
+  [[ "$branch" ]] || branch="$(echo "$status" | awk '/# On branch/ {print $4}')"
+  [[ "$branch" ]] || branch="$(git branch | perl -ne '/^\* \(detached from (.*)\)$/ ? print "($1)" : /^\* (.*)/ && print $1')"
   flags="$(
     echo "$status" | awk 'BEGIN {r=""} \
         /^(# )?Changes to be committed:$/        {r=r "+"}\
@@ -149,17 +149,46 @@ function prompt_git() {
         /^(# )?Untracked files:$/                {r=r "?"}\
       END {print r}'
   )"
-  if [[ "$flags" ]]; then
-    output="$output:$flags"
-  fi
-  echo "$c5[$output]$c0 "
+  __prompt_vcs_info=("$branch" "$flags")
 }
+
+# hg status.
+function __prompt_hg() {
+  __prompt_get_colors
+  local summary branch bookmark flags
+  summary="$(hg summary 2>/dev/null)"
+  [[ $? != 0 ]] && return 1;
+  branch="$(echo "$summary" | awk '/branch:/ {print $2}')"
+  bookmark="$(echo "$summary" | awk '/bookmarks:/ {print $2}')"
+  flags="$(
+    echo "$summary" | awk 'BEGIN {r="";a=""} \
+      /(modified)/     {r= "+"}\
+      /(unknown)/      {a= "?"}\
+      END {print r a}'
+  )"
+  __prompt_vcs_info=("$branch" "$bookmark" "$flags")
+}
+
+# SVN info.
+function __prompt_svn() {
+  __prompt_get_colors
+  local info last current
+  info="$(svn info . 2> /dev/null)"
+  [[ ! "$info" ]] && return 1
+  last="$(echo "$info" | awk '/Last Changed Rev:/ {print $4}')"
+  current="$(echo "$info" | awk '/Revision:/ {print $2}')"
+  __prompt_vcs_info=("$last" "$current")
+}
+
+# Maintain a per-execution call stack.
+__prompt_stack=()
+trap '__prompt_stack=("${__prompt_stack[@]}" "$BASH_COMMAND"); __timer_start' DEBUG
 
 # conda environment
 # Adapted from
 # https://github.com/bryanwweber/dot-files/blob/master/macos.bash_profile#L16
-function prompt_conda() {
-    prompt_getcolors
+function __prompt_conda() {
+    __prompt_get_colors
     if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
         if [ "$CONDA_DEFAULT_ENV" != "base" ]; then
             echo "$c8[$CONDA_DEFAULT_ENV]$c0 "
@@ -167,16 +196,12 @@ function prompt_conda() {
     fi
 }
 
-# Maintain a per-execution call stack.
-prompt_stack=()
-trap 'prompt_stack=("${prompt_stack[@]}" "$BASH_COMMAND"); timer_start' DEBUG
-
-function prompt_command() {
-  local exit_code=$?
-  # If the first command in the stack is prompt_command, no command was run.
+function __prompt_command() {
+  local i exit_code=$?
+  # If the first command in the stack is __prompt_command, no command was run.
   # Set exit_code to 0 and reset the stack.
-  [[ "${prompt_stack[0]}" == "prompt_command" ]] && exit_code=0
-  prompt_stack=()
+  [[ "${__prompt_stack[0]}" == "__prompt_command" ]] && exit_code=0
+  __prompt_stack=()
 
   # Manually load z here, after $? is checked, to keep $? from being clobbered.
   [[ "$(type -t _z)" ]] && _z --add "$(pwd -P 2>/dev/null)" 2>/dev/null
@@ -184,29 +209,48 @@ function prompt_command() {
   # While the simple_prompt environment var is set, disable the awesome prompt.
   [[ "$simple_prompt" ]] && PS1='\n$ ' && return
 
-  prompt_getcolors
+  __prompt_get_colors
   # http://twitter.com/cowboy/status/150254030654939137
   PS1="" # PS1="\n" for newline before prompt
   # user@host:
   PS1="$PS1$c1\u@\h:$c0 "
   # conda: [env]
-  PS1="$PS1$(prompt_conda)"
+  PS1="$PS1$(__prompt_conda)"
+  __prompt_vcs_info=()
   # git: [branch:flags]
-  PS1="$PS1$(prompt_git)"
+  __prompt_git || \
+  # hg:  [branch:bookmark:flags]
+  __prompt_hg || \
+  # svn: [repo:lastchanged]
+  __prompt_svn
+  # Iterate over all vcs info parts, outputting an escaped var name that will
+  # be interpolated automatically. This ensures that malicious branch names
+  # can't execute arbitrary commands. For more info, see this PR:
+  # https://github.com/cowboy/dotfiles/pull/68
+  if [[ "${#__prompt_vcs_info[@]}" != 0 ]]; then
+    PS1="$PS1$c5["
+    for i in "${!__prompt_vcs_info[@]}"; do
+      if [[ "${__prompt_vcs_info[i]}" ]]; then
+        [[ $i != 0 ]] && PS1="$PS1:"
+        PS1="$PS1\${__prompt_vcs_info[$i]}"
+      fi
+    done
+    PS1="$PS1]$c0"
+  fi
   # path
   PS1="$PS1$c2\w$c0"
   PS1="$PS1\n"
   # date: [HH:MM:SS]
   PS1="$PS1$c3$(date +"%H:%M:%S")$c0 "
   # timer: [last: time]
-  PS1="$PS1$(prompt_timer)"
+  PS1="$PS1$(__prompt_timer)"
   unset timer
   # exit code: [Error 127]
-  PS1="$PS1$(prompt_exitcode "$exit_code")"
+  PS1="$PS1$(__prompt_exitcode "$exit_code")"
   PS1="$PS1$c4\$$c0 "
 }
 
-PROMPT_COMMAND="prompt_command"
+PROMPT_COMMAND="__prompt_command"
 # Share history across windows
 # PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
