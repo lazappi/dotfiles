@@ -3,18 +3,13 @@
 
 alias g='git'
 alias gp='git push'
-<<<<<<< HEAD
-=======
 alias gpup='gp --set-upstream origin $(gbs)'
 alias gpa='gp --all'
->>>>>>> upstream/master
 alias gu='git pull'
 alias gl='git log'
 alias gs='git status'
 alias gb='git branch'
 
-<<<<<<< HEAD
-=======
 # Current branch or SHA if detached.
 alias gbs='git branch | perl -ne '"'"'/^\* (?:\(detached from (.*)\)|(.*))/ && print "$1$2"'"'"''
 
@@ -22,53 +17,6 @@ alias gbs='git branch | perl -ne '"'"'/^\* (?:\(detached from (.*)\)|(.*))/ && p
 alias gu-all='eachdir git pull'
 alias gp-all='eachdir git push'
 alias gs-all='eachdir git status'
-
-# Rebase topic branch onto origin parent branch and update local parent branch
-# to match origin parent branch
-function grbo() {
-  local parent topic parent_sha origin_sha
-  parent=$1
-  topic=$2
-  [[ ! "$parent" ]] && _grbo_err "Missing parent branch." && return 1
-  parent_sha=$(git rev-parse $parent 2>/dev/null)
-  [[ $? != 0 ]] && _grbo_err "Invalid parent branch: $parent" && return 1
-  origin_sha=$(git ls-remote origin $parent | awk '{print $1}')
-  [[ ! "$origin_sha" ]] && _grbo_err "Invalid origin parent branch: origin/$parent" && return 1
-  [[ "$parent_sha" == "$origin_sha" ]] && echo "Same SHA for parent and origin/parent. Nothing to do!" && return
-  if [[ "$topic" ]]; then
-    git rev-parse "$topic" >/dev/null 2>&1
-    [[ $? != 0 ]] && _grbo_err "Invalid topic branch: $topic" && return 1
-  else
-    topic="$(git rev-parse --abbrev-ref HEAD)"
-  fi
-  [[ "$topic" == "HEAD" ]] && _grbo_err "Missing or invalid topic branch." && return 1
-  [[ "$topic" == "$parent" ]] && _grbo_err "Topic and parent branch must be different!" && return 1
-  read -n 1 -r -p "About to rebase $topic onto origin/$parent. Are you sure? [y/N] "
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo
-    git fetch &&
-    git rebase --onto origin/$parent $parent "$topic" &&
-    git branch -f $parent origin/$parent
-  else
-    echo "Aborted by user."
-  fi
-}
-function _grbo_err() {
-  echo "Error: $@"
-  echo "Usage: grbo parent-branch [topic-branch]"
-}
-
-# open all changed files (that still actually exist) in the editor
-function ged() {
-  local files
-  local _IFS="$IFS"
-  IFS=$'\n' files=($(git diff --name-status "$@" | grep -v '^D' | cut -f2 | sort | uniq))
-  IFS="$_IFS"
-  echo "Opening files modified $([[ "$2" ]] && echo "between $1 and $2" || echo "since $1")"
-  gcd
-  q "${files[@]}"
-  cd - > /dev/null
-}
 
 # add a github remote by github username
 function gra() {
@@ -101,21 +49,6 @@ function gf() {
 AWK
   )" | less -F
 }
-
-# open last commit in GitHub, in the browser.
-function gfu() {
-  local n="${@:-1}"
-  n=$((n-1))
-  git web--browse  $(git log -n 1 --skip=$n --pretty=oneline | awk "{printf \"$(gurl)/commit/%s\", substr(\$1,1,7)}")
-}
-# open current branch + path in GitHub, in the browser.
-alias gpu='git web--browse $(gurlp)'
-
-# Just the last few commits, please!
-for n in {1..5}; do alias gf$n="gf -n $n"; done
-
-function gj() { git-jump "${@:-next}"; }
-alias gj-='gj prev'
 
 # Combine diff --name-status and --stat
 function gstat() {
@@ -164,25 +97,3 @@ function gstat() {
   done
   unset IFS
 }
-
-# OSX-specific Git shortcuts
-if is_osx; then
-  alias gdk='git ksdiff'
-  alias gdkc='gdk --cached'
-  function gt() {
-    local path repo
-    {
-      pushd "${1:-$PWD}"
-      path="$PWD"
-      repo="$(git rev-parse --show-toplevel)"
-      popd
-    } >/dev/null 2>&1
-    if [[ -e "$repo" ]]; then
-      echo "Opening git repo $repo."
-      gittower "$repo"
-    else
-      echo "Error: $path is not a git repo."
-    fi
-  }
-fi
->>>>>>> upstream/master
