@@ -3,10 +3,9 @@
 /backups/
 
 # Top secret stuff!
-/link/.ssh/authorized_keys
 /link/.ssh/id_*
 /link/.ssh/*.pem
-/link/.ssh/known_hosts
+/link/.ssh/known_hosts*
 
 # Don't commit Vim plugins, vim-plug will install them.
 /link/.vim/plugged
@@ -15,6 +14,9 @@
 /link/.rbenv/shims/
 /link/.rbenv/versions/
 /link/.rbenv/version
+
+# Don't commit tmux plugins, tpm will install them.
+/link/.tmux/plugins
 
 # Ignore any file with LOCAL in the name (good for per-machine vars/functions)
 *LOCAL*

@@ -55,15 +55,15 @@
 [help]
   autocorrect = 20
 
+[push]
+  default = simple
+
 [merge]
   log = true
   ff = false
   tool = vimdiff
 
 [pull]
-
-[push]
-  default = simple
 
 [rerere]
   enabled = 1

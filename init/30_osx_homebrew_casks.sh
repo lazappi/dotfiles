@@ -4,14 +4,13 @@ is_osx || return 1
 # Exit if Homebrew is not installed.
 [[ ! "$(type -P brew)" ]] && e_error "Brew casks need Homebrew to install." && return 1
 
-# Ensure the cask keg and recipe are installed.
-kegs=(caskroom/cask)
+# Ensure the cask kegs are installed.
+kegs=(
+  caskroom/cask
+  caskroom/drivers
+  caskroom/fonts
+)
 brew_tap_kegs
-recipes=(brew-cask)
-brew_install_recipes
-
-# Exit if, for some reason, cask is not installed.
-[[ ! "$(brew ls --versions brew-cask)" ]] && e_error "Brew-cask failed to install." && return 1
 
 # Hack to show the first-run brew-cask password prompt immediately.
 brew cask info this-is-somewhat-annoying 2>/dev/null
@@ -22,9 +21,12 @@ casks=(
   google-chrome
   iterm2
   macvim
-  moom
+  r
+  rstudio
   spotify
   the-unarchiver
+  visual-studio-code
+
   # Quick Look plugins
   betterzipql
   qlcolorcode
@@ -36,6 +38,12 @@ casks=(
   quicknfo
   suspicious-package
   webpquicklook
+
+  # Fonts
+  font-m-plus
+  font-mplus-nerd-font
+  font-mplus-nerd-font-mono
+  font-fira-code
 )
 
 # Install Homebrew casks.
