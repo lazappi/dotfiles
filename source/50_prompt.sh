@@ -235,7 +235,7 @@ function __prompt_command() {
         PS1="$PS1\${__prompt_vcs_info[$i]}"
       fi
     done
-    PS1="$PS1]$c0"
+    PS1="$PS1]$c0 "
   fi
   # path
   PS1="$PS1$c2\w$c0"
