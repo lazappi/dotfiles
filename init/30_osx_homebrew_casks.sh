@@ -6,9 +6,9 @@ is_osx || return 1
 
 # Ensure the cask kegs are installed.
 kegs=(
-  caskroom/cask
-  caskroom/drivers
-  caskroom/fonts
+  homebrew/cask-drivers
+  homebrew/cask-fonts
+  homebrew/cask-versions
 )
 brew_tap_kegs
 
@@ -28,7 +28,6 @@ casks=(
   visual-studio-code
 
   # Quick Look plugins
-  betterzipql
   qlcolorcode
   qlmarkdown
   qlprettypatch
@@ -38,7 +37,6 @@ casks=(
   quicknfo
   suspicious-package
   webpquicklook
-
   # Fonts
   font-m-plus
   font-mplus-nerd-font
@@ -53,7 +51,6 @@ if (( ${#casks[@]} > 0 )); then
   for cask in "${casks[@]}"; do
     brew cask install $cask
   done
-  brew cask cleanup
 fi
 
 # Work around colorPicker symlink issue.
