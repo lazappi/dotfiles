@@ -35,13 +35,6 @@ color.blocked = rgb300
 report.next.columns=id,start.age,entry.age,depends,priority,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description.count,urgency
 report.next.filter=status:pending limit:page -gh_backburner -gh_outside_issue
 
-# Syncing
-taskd.server=freecinc.com:53589
-taskd.key=\/Users\/Luke\/.task\/freecinc_d2bb4164.key.pem
-taskd.certificate=\/Users\/Luke\/.task\/freecinc_d2bb4164.cert.pem
-taskd.ca=\/Users\/Luke\/.task\/freecinc_d2bb4164.ca.pem
-taskd.credentials=FreeCinc\/freecinc_d2bb4164\/1779f0dc-2781-40d3-9907-9a5cae7f3161
-
 # Bugwarrior UDAs
 uda.githubtitle.type=string
 uda.githubtitle.label=Github Title
