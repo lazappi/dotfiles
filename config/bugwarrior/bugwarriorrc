@@ -1,0 +1,33 @@
+[general]
+
+targets = gh_lazappi,gh_oshlack
+
+inline_links = False
+
+annotation_links = True
+annotation_comments = True
+
+legacy_matching = False
+
+[gh_lazappi]
+
+service = github
+github.username = lazappi
+github.exclude_repos = RNAtools
+github.login = lazappi
+github.token = @oracle:use_keyring
+github.add_tags = github
+github.import_labels_as_tags = True
+github.label_template = gh_{{label}}
+
+[gh_oshlack]
+
+service = github
+github.username = oshlack
+github.include_repos = scRNA-tools,splatter
+github.login = lazappi
+github.token = @oracle:use_keyring
+github.add_tags = github
+github.import_labels_as_tags = True
+github.label_template = gh_{{label}}
+
