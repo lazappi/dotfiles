@@ -27,6 +27,10 @@ recipes=(
   thefuck
   tree
   wget
+  bat
+  exa
+  task
+  tasksh
 )
 
 brew_install_recipes
