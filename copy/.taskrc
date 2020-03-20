@@ -66,6 +66,7 @@ uda.githubstate.label=GitHub State
 
 # Customisation
 uda.priority.values=H,M,,L
+urgency.user.tag.gh_devel.coefficient=-20.0
 urgency.user.tag.gh_backburner.coefficient=-20.0
 urgency.user.tag.gh_outside_issue.coefficient=-10.0
 
