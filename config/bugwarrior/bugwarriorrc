@@ -24,10 +24,30 @@ github.label_template = gh_{{label}}
 
 service = github
 github.username = oshlack
-github.include_repos = scRNA-tools,splatter
+github.include_repos = splatter
 github.login = lazappi
 github.token = @oracle:use_keyring
 github.add_tags = github
 github.import_labels_as_tags = True
 github.label_template = gh_{{label}}
 
+[gh_scRNAtools]
+
+service = github
+github.username = scRNA-tools
+github.login = lazappi
+github.token = @oracle:use_keyring
+github.add_tags = github
+github.import_labels_as_tags = True
+github.label_template = gh_{{label}}
+
+[gh_theislab]
+
+service = github
+github.username = theislab
+github.include_repos = zellkonverter,scanpy-in-R
+github.login = lazappi
+github.token = @oracle:use_keyring
+github.add_tags = github
+github.import_labels_as_tags = True
+github.label_template = gh_{{label}}
