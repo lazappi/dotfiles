@@ -21,6 +21,6 @@ test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shel
 # Prettier cat, less, ls with bat and exa
 alias cat='bat --paging=never'
 alias less=bat
-alias ls=exa
-alias ll='exa -l --header --git --time-style=long-iso'
-alias tree='exa --tree'
+alias ls=eza
+alias ll='eza -l --header --git --time-style=long-iso'
+alias tree='eza --tree'

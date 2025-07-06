@@ -1,6 +1,6 @@
 [general]
 
-targets = gh_lazappi,gh_oshlack
+targets = gh_lazappi,gh_oshlack,gh_scRNAtools,gh_theislab
 
 inline_links = False
 
@@ -13,21 +13,74 @@ legacy_matching = False
 
 service = github
 github.username = lazappi
-github.exclude_repos = RNAtools
+github.exclude_repos = RNAtools,scRNAseqSim,KleinK562
 github.login = lazappi
 github.token = @oracle:use_keyring
 github.add_tags = github
 github.import_labels_as_tags = True
 github.label_template = gh_{{label}}
+github.description_template = #{{githubnumber}} {{githubtitle}}
 
 [gh_oshlack]
 
 service = github
 github.username = oshlack
-github.include_repos = scRNA-tools,splatter
+github.include_repos = splatter
 github.login = lazappi
 github.token = @oracle:use_keyring
 github.add_tags = github
 github.import_labels_as_tags = True
 github.label_template = gh_{{label}}
+github.description_template = #{{githubnumber}} {{githubtitle}}
+
+[gh_scRNAtools]
+
+service = github
+github.username = scRNA-tools
+github.login = lazappi
+github.token = @oracle:use_keyring
+github.add_tags = github
+github.import_labels_as_tags = True
+github.label_template = gh_{{label}}
+github.description_template = #{{githubnumber}} {{githubtitle}}
+
+[gh_theislab]
+
+service = github
+github.username = theislab
+github.include_repos = zellkonverter,scanpy-in-R,sfaira-portal,multires-consensus-clustering
+github.login = lazappi
+github.token = @oracle:use_keyring
+github.add_tags = github
+github.import_labels_as_tags = True
+github.label_template = gh_{{label}}
+github.description_template = #{{githubnumber}} {{githubtitle}}
+
+[gh_theislab2]
+
+service = github
+github.username = theislab
+github.login = lazappi
+github.token = @oracle:use_keyring
+github.add_tags = github
+github.import_labels_as_tags = True
+github.label_template = gh_{{label}}
+github.include_user_issues = False
+github.include_user_repos = False
+github.query = assignee:lazappi is:open
+github.description_template = #{{githubnumber}} {{githubtitle}}
+
+[gh_bioc]
+
+service = github
+github.username = Bioconductor
+github.login = lazappi
+github.token = @oracle:use_keyring
+github.add_tags = github
+github.import_labels_as_tags = True
+github.label_template = gh_{{label}}
+github.include_user_issues = False
+github.include_user_repos = False
+github.query = assignee:lazappi is:open
+github.description_template = #{{githubnumber}} {{githubtitle}}
 

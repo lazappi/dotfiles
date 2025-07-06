@@ -21,5 +21,12 @@ function dotfiles() {
 PATH=~/bin:$PATH
 export PATH
 
+eval "$(thefuck --alias)"
+# eval "$(starship init bash)"
+
+eval "$(frum init)"
+
 src
 
+
+source /Users/luke.zappia/.docker/init-bash.sh || true # Added by Docker Desktop
